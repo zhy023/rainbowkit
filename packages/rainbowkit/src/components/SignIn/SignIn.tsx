@@ -174,6 +174,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
               size={mobile ? '16' : '14'}
               textAlign="center"
             >
+              deputy sign message:
               To finish connecting, you must sign a message in your wallet to
               verify that you are the owner of this account.
             </Text>
