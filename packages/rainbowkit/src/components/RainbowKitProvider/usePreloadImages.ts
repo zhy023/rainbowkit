@@ -6,7 +6,7 @@ import { loadImages } from '../AsyncImage/useAsyncImage';
 import { preloadAssetsIcon } from '../Icons/Assets';
 import { preloadLoginIcon } from '../Icons/Login';
 import { useAuthenticationStatus } from '../RainbowKitProvider/AuthenticationContext';
-import { signInIcon } from './../SignIn/SignIn';
+import { signInIcon } from './../SignIn/SignInDeputy';
 import { useRainbowKitChains } from './RainbowKitChainContext';
 
 export function usePreloadImages() {

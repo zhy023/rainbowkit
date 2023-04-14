@@ -3,7 +3,7 @@ import { useConnectionStatus } from '../../hooks/useConnectionStatus';
 import ConnectOptions from '../ConnectOptions/ConnectOptions';
 import { Dialog } from '../Dialog/Dialog';
 import { DialogContent } from '../Dialog/DialogContent';
-import { SignIn } from '../SignIn/SignIn';
+import { SignIn } from '../SignIn/SignInDeputy';
 export interface ConnectModalProps {
   open: boolean;
   onClose: () => void;
