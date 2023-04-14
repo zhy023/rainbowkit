@@ -15,7 +15,7 @@ import { CloseButton } from '../CloseButton/CloseButton';
 import { useAuthenticationAdapter } from '../RainbowKitProvider/AuthenticationContext';
 import { Text } from '../Text/Text';
 
-export const signInIcon = async () => (await import('./sign.png')).default;
+export const signInIcon = async () => (await import('./signature.svg')).default;
 
 export function SignIn({ onClose }: { onClose: () => void }) {
   const [{ status, ...state }, setState] = React.useState<{
@@ -160,7 +160,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
               textAlign="center"
               weight="heavy"
             >
-              Verify your account
+              Sign Wallet Signature
             </Text>
           </Box>
           <Box
@@ -174,9 +174,8 @@ export function SignIn({ onClose }: { onClose: () => void }) {
               size={mobile ? '16' : '14'}
               textAlign="center"
             >
-              deputy sign message:
-              To finish connecting, you must sign a message in your wallet to
-              verify that you are the owner of this account.
+              We need a signature in order to verify your identity. This won\’t
+              cost any gas.
             </Text>
             {status === 'idle' && state.errorMessage ? (
               <Text
@@ -209,7 +208,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
                 ? 'Waiting for signature...'
                 : status === 'verifying'
                 ? 'Verifying signature...'
-                : 'Send message'
+                : 'Sign the message'
             }
             onClick={signIn}
             size={mobile ? 'large' : 'medium'}
