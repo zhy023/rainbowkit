@@ -174,7 +174,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
               size={mobile ? '16' : '14'}
               textAlign="center"
             >
-              We need a signature in order to verify your identity. This won\’t
+              We need a signature in order to verify your identity. This won’t
               cost any gas.
             </Text>
             {status === 'idle' && state.errorMessage ? (
