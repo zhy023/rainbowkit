@@ -1,5 +1,25 @@
 # with-next-siwe-next-auth
 
+## 0.0.28
+
+### Patch Changes
+
+- Updated dependencies [361bb39]
+- Updated dependencies [82376f0]
+- Updated dependencies [7c9e580]
+- Updated dependencies [0127559]
+  - @rainbow-me/rainbowkit@0.12.9
+  - @rainbow-me/rainbowkit-siwe-next-auth@0.1.9
+
+## 0.0.27
+
+### Patch Changes
+
+- Updated dependencies [aef9643]
+- Updated dependencies [532b117]
+  - @rainbow-me/rainbowkit@0.12.8
+  - @rainbow-me/rainbowkit-siwe-next-auth@0.1.9
+
 ## 0.0.26
 
 ### Patch Changes

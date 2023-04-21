@@ -1,5 +1,127 @@
 # @rainbow-me/rainbowkit
 
+## 0.12.9
+
+### Patch Changes
+
+- 361bb39: Phantom Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { phantomWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, projectId, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [phantomWallet({ chains })],
+    },
+  ]);
+  ```
+
+- 82376f0: Rabby Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { rabbyWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [rabbyWallet({ chains })],
+    },
+  ]);
+  ```
+
+- 7c9e580: Trust Wallet Support
+
+  The `trustWallet` wallet connector now includes support for the Trust Wallet browser extension.
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { trustWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, projectId, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [trustWallet({ projectId, chains })],
+    },
+  ]);
+  ```
+
+- 0127559: XDEFI Wallet Support
+
+  **Example usage**
+
+  ```tsx
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { xdefiWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, projectId, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [xdefiWallet({ chains })],
+    },
+  ]);
+  ```
+
+## 0.12.8
+
+### Patch Changes
+
+- aef9643: **Support for WalletConnect Cloud `projectId`**
+
+  Every dApp that relies on WalletConnect now needs to obtain a `projectId` from [WalletConnect Cloud](https://cloud.walletconnect.com/). This is absolutely free and only takes a few minutes.
+
+  RainbowKit will enable WalletConnect v2 for supported wallets when `projectId` is specified. If `projectId` is unspecified, RainbowKit will quietly prefer WalletConnect v1.
+
+  This must be completed before WalletConnect v1 bridge servers are shutdown on June 28, 2023.
+
+  Provide the `projectId` to `getDefaultWallets` and individual RainbowKit wallet connectors like the following:
+
+  ```ts
+  const projectId = 'YOUR_PROJECT_ID';
+
+  const { wallets } = getDefaultWallets({
+    appName: 'My RainbowKit App',
+    projectId,
+    chains,
+  });
+
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [
+        argentWallet({ projectId, chains }),
+        trustWallet({ projectId, chains }),
+        ledgerWallet({ projectId, chains }),
+      ],
+    },
+  ]);
+  ```
+
 ## 0.12.7
 
 ### Patch Changes
