@@ -3,14 +3,20 @@ import { Chain } from '../../../components/RainbowKitProvider/RainbowKitChainCon
 import { isIOS } from '../../../utils/isMobile';
 import { Wallet } from '../../Wallet';
 import { getWalletConnectConnector } from '../../getWalletConnectConnector';
+import type {
+  WalletConnectConnectorOptions,
+  WalletConnectLegacyConnectorOptions,
+} from '../../getWalletConnectConnector';
 
 export interface WalletConnectWalletOptions {
   projectId?: string;
   chains: Chain[];
+  options?: WalletConnectLegacyConnectorOptions | WalletConnectConnectorOptions;
 }
 
 export const walletConnectWallet = ({
   chains,
+  options,
   projectId,
 }: WalletConnectWalletOptions): Wallet => ({
   id: 'walletConnect',
@@ -21,9 +27,13 @@ export const walletConnectWallet = ({
     const ios = isIOS();
 
     const connector = getWalletConnectConnector({
-      projectId,
+      version: '1',
       chains,
-      qrcode: ios,
+      options: {
+        qrcode: ios,
+        projectId,
+        ...options,
+      },
     });
 
     const getUri = async () => (await connector.getProvider()).connector.uri;
