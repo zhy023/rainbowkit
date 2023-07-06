@@ -18,6 +18,7 @@ import { tahoWallet } from './tahoWallet/tahoWallet';
 import { trustWallet } from './trustWallet/trustWallet';
 import { walletConnectWallet } from './walletConnectWallet/walletConnectWallet';
 import { xdefiWallet } from './xdefiWallet/xdefiWallet';
+import { xverseWallet } from './xverseWallet/xverseWallet';
 import { zerionWallet } from './zerionWallet/zerionWallet';
 
 export {
@@ -42,4 +43,5 @@ export {
   walletConnectWallet,
   xdefiWallet,
   zerionWallet,
+  xverseWallet,
 };

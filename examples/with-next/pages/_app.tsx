@@ -1,50 +1,37 @@
 import '../styles/global.css';
 import '@rainbow-me/rainbowkit/styles.css';
+import { ReactNode } from 'react';
 import type { AppProps } from 'next/app';
 import {
   RainbowKitProvider,
   getDefaultWallets,
   connectorsForWallets,
+  RainbowKitAuthenticationProvider,
 } from '@rainbow-me/rainbowkit';
 import {
   argentWallet,
   trustWallet,
   ledgerWallet,
+  xverseWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import {
-  mainnet,
-  polygon,
-  optimism,
-  arbitrum,
-  zora,
-  goerli,
-} from 'wagmi/chains';
+import { mainnet, polygon, optimism, arbitrum, zora } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { useAuthAdapter } from '../module/auth/use_auth_adapter';
+import { useAuthStore } from '../module/auth/auth';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
-    zora,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
-  ],
+  [mainnet, polygon, optimism, arbitrum, zora],
   [publicProvider()]
 );
 
-const projectId = 'YOUR_PROJECT_ID';
+const projectId = 'cc7e352f0f7e60a5e695cfb3e65f7072';
 
 const { wallets } = getDefaultWallets({
   appName: 'RainbowKit demo',
   projectId,
   chains,
 });
-
-const demoAppInfo = {
-  appName: 'Rainbowkit Demo',
-};
 
 const connectors = connectorsForWallets([
   ...wallets,
@@ -54,6 +41,11 @@ const connectors = connectorsForWallets([
       argentWallet({ projectId, chains }),
       trustWallet({ projectId, chains }),
       ledgerWallet({ projectId, chains }),
+      xverseWallet({
+        btcNetwork: {
+          type: 'Testnet',
+        },
+      }),
     ],
   },
 ]);
@@ -68,10 +60,23 @@ const wagmiConfig = createConfig({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
+      <AuthProvider>
         <Component {...pageProps} />
-      </RainbowKitProvider>
+      </AuthProvider>
     </WagmiConfig>
+  );
+}
+
+function AuthProvider(props: { children: ReactNode }) {
+  const { authAdapter } = useAuthAdapter();
+  const status = useAuthStore(state => state.status);
+
+  return (
+    <RainbowKitAuthenticationProvider adapter={authAdapter} status={status}>
+      <RainbowKitProvider coolMode chains={chains}>
+        <div>{props.children}</div>
+      </RainbowKitProvider>
+    </RainbowKitAuthenticationProvider>
   );
 }
 

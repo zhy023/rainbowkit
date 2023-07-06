@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from 'react';
+import { signMessage } from 'sats-connect';
 import { UserRejectedRequestError } from 'viem';
 import { useAccount, useDisconnect, useNetwork, useSignMessage } from 'wagmi';
 import { touchableStyles } from '../../css/touchableStyles';
@@ -46,11 +47,13 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   }, [getNonce]);
 
   const mobile = isMobile();
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { chain: activeChain } = useNetwork();
   const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();
   const cancel = () => disconnect();
+
+  // ----------------------------------------------------------------------------------
 
   const signIn = async () => {
     try {
@@ -115,6 +118,82 @@ export function SignIn({ onClose }: { onClose: () => void }) {
     }
   };
 
+  // ----------------------------------------------------------------------------------
+
+  const signXverse = async () =>
+    new Promise(async (resole, reject) => {
+      try {
+        setState(x => ({
+          ...x,
+          errorMessage: undefined,
+          status: 'signing',
+        }));
+
+        // btn return string
+        const message = authAdapter.getMessageBody({ message: '' });
+        const signMessageOptions = {
+          onCancel: () => {
+            setState(x => ({
+              ...x,
+              status: 'idle',
+            }));
+            reject();
+          },
+          onFinish: async (signature: string) => {
+            try {
+              const verified = await authAdapter.verify({ message, signature });
+
+              if (verified) {
+                resole(verified);
+                return;
+              } else {
+                throw new Error();
+              }
+            } catch (error) {
+              setState(x => ({
+                ...x,
+                errorMessage: 'Error verifying signature, please retry! 111',
+                status: 'idle',
+              }));
+              reject();
+            }
+          },
+          payload: {
+            address: connector.btnNetwork.address,
+            message,
+            network: connector.btnNetwork,
+          },
+        };
+
+        setState(x => ({ ...x, status: 'verifying' }));
+        await signMessage(signMessageOptions);
+      } catch (error) {
+        setState(x => ({
+          ...x,
+          errorMessage: 'Error signing message, please retry! 222',
+          status: 'idle',
+        }));
+      }
+    });
+
+  // ----------------------------------------------------------------------------------
+
+  async function signFacrey() {
+    // bitcoin
+    if (typeof connector !== undefined && connector.walletType !== undefined) {
+      // xverse
+      if (connector.walletType === 'xverse') {
+        await signXverse();
+      }
+
+      return;
+    }
+
+    await signIn();
+  }
+
+  // ----------------------------------------------------------------------------------
+
   return (
     <Box position="relative">
       <Box
@@ -164,6 +243,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
             flexDirection="column"
             gap={mobile ? '16' : '12'}
           >
+            <p>connector: {connector?.walletType}</p>
             <Text
               color="modalTextSecondary"
               size={mobile ? '16' : '14'}
@@ -205,7 +285,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
                 ? 'Verifying signature...'
                 : 'Sign the message'
             }
-            onClick={signIn}
+            onClick={signFacrey}
             size={mobile ? 'large' : 'medium'}
             testId="auth-message-button"
           />
