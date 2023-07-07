@@ -203,12 +203,12 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         setState(x => ({ ...x, status: 'verifying' }));
 
         // @ts-ignore
-        const res = await window.btc.request('signMessage', {
+        const signature = await window.btc?.request('signMessage', {
           message,
           paymentType: 'p2tr', // or 'p2wphk' (default)
         });
-
-        resolve(res);
+        const verified = await authAdapter.verify({ message, signature });
+        resolve(verified);
       } catch (error) {
         setState(x => ({
           ...x,
@@ -245,9 +245,10 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         setState(x => ({ ...x, status: 'verifying' }));
 
         // @ts-ignore
-        const res = await window.unisat.signMessage(message);
+        const signature = await window.unisat?.signMessage(message);
+        const verified = await authAdapter.verify({ message, signature });
 
-        resolve(res);
+        resolve(verified);
       } catch (error) {
         setState(x => ({
           ...x,

@@ -19,14 +19,6 @@ export async function delay(ms: number) {
   return new Promise(r => setTimeout(r, ms));
 }
 
-const getApiData = async () => {
-  const response = await fetch(
-    'https://jsonplaceholder.typicode.com/todos'
-  ).then(response => response.json());
-
-  return response;
-};
-
 // ----------------------------------------------------------------------------------
 
 export function useAuthAdapter() {
@@ -47,9 +39,8 @@ export function useAuthAdapter() {
   const authAdapter = createAuthenticationAdapter({
     getNonce: async () => {
       console.log(temp.address);
+      await delay(1000);
       console.log('step one api----------');
-      const v = await getApiData();
-      console.log(v);
       return '100';
     },
 
@@ -83,8 +74,7 @@ export function useAuthAdapter() {
 
     verify: async ({ message, signature }) => {
       console.log('step two api----------');
-      const v = await getApiData();
-      console.log(v);
+      await delay(1000);
       setStatus('authenticated');
 
       return true;
@@ -92,8 +82,7 @@ export function useAuthAdapter() {
 
     signOut: async () => {
       console.log('logout api----------');
-      const v = await getApiData();
-      console.log(v);
+      await delay(1000);
       setStatus('unauthenticated');
     },
   });
