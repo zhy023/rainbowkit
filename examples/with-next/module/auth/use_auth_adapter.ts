@@ -70,6 +70,14 @@ export function useAuthAdapter() {
         return 'Wellcome to deputy.network';
       }
 
+      if ((connector as any)?.walletType === 'hiro') {
+        return 'Wellcome to deputy.network';
+      }
+
+      if ((connector as any)?.walletType === 'unisat') {
+        return 'Wellcome to deputy.network';
+      }
+
       return message.prepareMessage();
     },
 

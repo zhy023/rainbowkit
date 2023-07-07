@@ -14,6 +14,7 @@ import {
   ledgerWallet,
   xverseWallet,
   hiroWallet,
+  unisatWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, zora } from 'wagmi/chains';
@@ -48,6 +49,7 @@ const connectors = connectorsForWallets([
         },
       }),
       hiroWallet({ btcNetwork: {} }),
+      unisatWallet({ btcNetwork: {} }),
     ],
   },
 ]);
