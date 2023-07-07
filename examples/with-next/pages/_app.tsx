@@ -13,6 +13,7 @@ import {
   trustWallet,
   ledgerWallet,
   xverseWallet,
+  hiroWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, zora } from 'wagmi/chains';
@@ -46,6 +47,7 @@ const connectors = connectorsForWallets([
           type: 'Testnet',
         },
       }),
+      hiroWallet({ btcNetwork: {} }),
     ],
   },
 ]);

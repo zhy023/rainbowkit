@@ -17,6 +17,7 @@ import { rainbowWallet } from './rainbowWallet/rainbowWallet';
 import { safeWallet } from './safeWallet/safeWallet';
 import { tahoWallet } from './tahoWallet/tahoWallet';
 import { trustWallet } from './trustWallet/trustWallet';
+import { unisatWallet } from './unisatWallet/unisatWallet';
 import { walletConnectWallet } from './walletConnectWallet/walletConnectWallet';
 import { xdefiWallet } from './xdefiWallet/xdefiWallet';
 import { xverseWallet } from './xverseWallet/xverseWallet';
@@ -46,4 +47,5 @@ export {
   zerionWallet,
   xverseWallet,
   hiroWallet,
+  unisatWallet,
 };
