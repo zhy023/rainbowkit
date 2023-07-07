@@ -178,12 +178,103 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   // ----------------------------------------------------------------------------------
 
+  const signHiro = async () =>
+    new Promise(async (resolve, reject) => {
+      try {
+        setState(x => ({
+          ...x,
+          errorMessage: undefined,
+          status: 'signing',
+        }));
+
+        // btn return string
+        const message = authAdapter.getMessageBody({ message: '' });
+
+        // @ts-ignore
+        if (!window.btc) {
+          setState(x => ({
+            ...x,
+            errorMessage: 'Error verifying signature, please retry! 111',
+            status: 'idle',
+          }));
+          reject();
+        }
+
+        setState(x => ({ ...x, status: 'verifying' }));
+
+        // @ts-ignore
+        const res = await window.btc.request('signMessage', {
+          message,
+          paymentType: 'p2tr', // or 'p2wphk' (default)
+        });
+
+        resolve(res);
+      } catch (error) {
+        setState(x => ({
+          ...x,
+          errorMessage: 'Error signing message, please retry! 222',
+          status: 'idle',
+        }));
+      }
+    });
+
+  // ----------------------------------------------------------------------------------
+
+  const signUnisat = async () =>
+    new Promise(async (resolve, reject) => {
+      try {
+        setState(x => ({
+          ...x,
+          errorMessage: undefined,
+          status: 'signing',
+        }));
+
+        // btn return string
+        const message = authAdapter.getMessageBody({ message: '' });
+
+        // @ts-ignore
+        if (!window.btc) {
+          setState(x => ({
+            ...x,
+            errorMessage: 'Error verifying signature, please retry! 111',
+            status: 'idle',
+          }));
+          reject();
+        }
+
+        setState(x => ({ ...x, status: 'verifying' }));
+
+        // @ts-ignore
+        const res = await window.unisat.signMessage(message);
+
+        resolve(res);
+      } catch (error) {
+        setState(x => ({
+          ...x,
+          errorMessage: 'Error signing message, please retry! 222',
+          status: 'idle',
+        }));
+      }
+    });
+
+  // ----------------------------------------------------------------------------------
+
   async function signFacrey() {
     // bitcoin
     if (typeof connector !== undefined && connector.walletType !== undefined) {
       // xverse
       if (connector.walletType === 'xverse') {
         await signXverse();
+      }
+
+      // hiro
+      if (connector.walletType === 'hiro') {
+        await signHiro();
+      }
+
+      // unisat
+      if (connector.walletType === 'unisat') {
+        await signUnisat();
       }
 
       return;
