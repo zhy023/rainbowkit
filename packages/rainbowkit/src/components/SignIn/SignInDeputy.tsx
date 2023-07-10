@@ -129,8 +129,12 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           status: 'signing',
         }));
 
-        // btn return string
-        const message = authAdapter.getMessageBody({ message: '' });
+        const message = authAdapter.createMessage({
+          address: '',
+          chainId: 0,
+          nonce: '',
+        });
+        const signMsg = message.getMessageBody({ message: '' });
         const signMessageOptions = {
           onCancel: () => {
             setState(x => ({
@@ -141,7 +145,10 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           },
           onFinish: async (signature: string) => {
             try {
-              const verified = await authAdapter.verify({ message, signature });
+              const verified = await authAdapter.verify({
+                message: signMsg,
+                signature,
+              });
 
               if (verified) {
                 resole(verified);
@@ -187,8 +194,13 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           status: 'signing',
         }));
 
-        // btn return string
-        const message = authAdapter.getMessageBody({ message: '' });
+        const message = authAdapter.createMessage({
+          address: '',
+          chainId: 0,
+          nonce: '',
+        });
+
+        const signMsg = message.getMessageBody({ message: '' });
 
         // @ts-ignore
         if (!window.btc) {
@@ -204,10 +216,15 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
         // @ts-ignore
         const signature = await window.btc?.request('signMessage', {
-          message,
+          message: signMsg,
           paymentType: 'p2tr', // or 'p2wphk' (default)
         });
-        const verified = await authAdapter.verify({ message, signature });
+
+        const verified = await authAdapter.verify({
+          message: signMsg,
+          signature,
+        });
+
         resolve(verified);
       } catch (error) {
         setState(x => ({
@@ -229,8 +246,13 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           status: 'signing',
         }));
 
-        // btn return string
-        const message = authAdapter.getMessageBody({ message: '' });
+        const message = authAdapter.createMessage({
+          address: '',
+          chainId: 0,
+          nonce: '',
+        });
+
+        const signMsg = message.getMessageBody({ message: '' });
 
         // @ts-ignore
         if (!window.btc) {
@@ -245,8 +267,11 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         setState(x => ({ ...x, status: 'verifying' }));
 
         // @ts-ignore
-        const signature = await window.unisat?.signMessage(message);
-        const verified = await authAdapter.verify({ message, signature });
+        const signature = await window.unisat?.signMessage(signmsg);
+        const verified = await authAdapter.verify({
+          message: signMsg,
+          signature,
+        });
 
         resolve(verified);
       } catch (error) {
