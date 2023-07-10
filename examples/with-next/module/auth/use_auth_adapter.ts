@@ -1,5 +1,5 @@
 import { SiweMessage } from 'siwe';
-import { useAccount } from 'wagmi';
+import { useAccount, Connector } from 'wagmi';
 import { createAuthenticationAdapter } from '@rainbow-me/rainbowkit';
 import { useAuthStore } from './auth';
 
@@ -17,6 +17,26 @@ const temp = {
 
 export async function delay(ms: number) {
   return new Promise(r => setTimeout(r, ms));
+}
+
+const isBitcoinConnect = (conn?: Connector): boolean =>
+  ['xverse', 'hiro', 'unisat'].includes((conn as any)?.walletType);
+
+// ----------------------------------------------------------------------------------
+
+class BitcoinMessage {
+  statement = '';
+
+  constructor(options: { statement: string }) {
+    Object.assign(this, options);
+  }
+
+  toMessage(): string {
+    return this.statement || '';
+  }
+  prepareMessage(): string {
+    return this.toMessage();
+  }
 }
 
 // ----------------------------------------------------------------------------------
@@ -45,6 +65,12 @@ export function useAuthAdapter() {
     },
 
     createMessage: ({ nonce, address, chainId }) => {
+      if (isBitcoinConnect(connector)) {
+        return new BitcoinMessage({
+          statement: 'Wellcome to deputy.network',
+        });
+      }
+
       return new SiweMessage({
         nonce,
         address,
@@ -57,18 +83,6 @@ export function useAuthAdapter() {
     },
 
     getMessageBody: ({ message }) => {
-      if ((connector as any)?.walletType === 'xverse') {
-        return 'Wellcome to deputy.network';
-      }
-
-      if ((connector as any)?.walletType === 'hiro') {
-        return 'Wellcome to deputy.network';
-      }
-
-      if ((connector as any)?.walletType === 'unisat') {
-        return 'Wellcome to deputy.network';
-      }
-
       return message.prepareMessage();
     },
 

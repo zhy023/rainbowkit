@@ -122,6 +122,13 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   const signXverse = async () =>
     new Promise(async (resole, reject) => {
+      const chainId = activeChain?.id;
+      const { nonce } = state;
+
+      if (!address || !chainId || !nonce) {
+        return;
+      }
+
       try {
         setState(x => ({
           ...x,
@@ -130,9 +137,9 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         }));
 
         const message = authAdapter.createMessage({
-          address: '',
-          chainId: 0,
-          nonce: '',
+          address,
+          chainId,
+          nonce,
         });
         const signMsg = message.getMessageBody({ message: '' });
         const signMessageOptions = {
@@ -187,6 +194,13 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   const signHiro = async () =>
     new Promise(async (resolve, reject) => {
+      const chainId = activeChain?.id;
+      const { nonce } = state;
+
+      if (!address || !chainId || !nonce) {
+        return;
+      }
+
       try {
         setState(x => ({
           ...x,
@@ -195,12 +209,12 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         }));
 
         const message = authAdapter.createMessage({
-          address: '',
-          chainId: 0,
-          nonce: '',
+          address,
+          chainId,
+          nonce,
         });
 
-        const signMsg = message.getMessageBody({ message: '' });
+        const signMsg = authAdapter.getMessageBody({ message });
 
         // @ts-ignore
         if (!window.btc) {
@@ -227,6 +241,8 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
         resolve(verified);
       } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error);
         setState(x => ({
           ...x,
           errorMessage: 'Error signing message, please retry! 222',
@@ -239,6 +255,13 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   const signUnisat = async () =>
     new Promise(async (resolve, reject) => {
+      const chainId = activeChain?.id;
+      const { nonce } = state;
+
+      if (!address || !chainId || !nonce) {
+        return;
+      }
+
       try {
         setState(x => ({
           ...x,
@@ -247,12 +270,12 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         }));
 
         const message = authAdapter.createMessage({
-          address: '',
-          chainId: 0,
-          nonce: '',
+          address,
+          chainId,
+          nonce,
         });
 
-        const signMsg = message.getMessageBody({ message: '' });
+        const signMsg = authAdapter.getMessageBody({ message });
 
         // @ts-ignore
         if (!window.btc) {
@@ -287,7 +310,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   async function signFacrey() {
     // bitcoin
-    if (typeof connector !== undefined && connector.walletType !== undefined) {
+    if (connector?.walletType) {
       // xverse
       if (connector.walletType === 'xverse') {
         await signXverse();
