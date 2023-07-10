@@ -235,7 +235,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         });
 
         const verified = await authAdapter.verify({
-          message: signMsg,
+          message,
           signature,
         });
 
@@ -290,9 +290,9 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         setState(x => ({ ...x, status: 'verifying' }));
 
         // @ts-ignore
-        const signature = await window.unisat?.signMessage(signmsg);
+        const signature = await window.unisat?.signMessage(signMsg);
         const verified = await authAdapter.verify({
-          message: signMsg,
+          message,
           signature,
         });
 
