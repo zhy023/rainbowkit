@@ -229,14 +229,14 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         setState(x => ({ ...x, status: 'verifying' }));
 
         // @ts-ignore
-        const signature = await window.btc?.request('signMessage', {
+        const { result } = await window.btc?.request('signMessage', {
           message: signMsg,
           paymentType: 'p2tr', // or 'p2wphk' (default)
         });
 
         const verified = await authAdapter.verify({
           message,
-          signature,
+          signature: result.signature,
         });
 
         resolve(verified);

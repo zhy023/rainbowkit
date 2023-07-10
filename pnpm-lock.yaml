@@ -134,12 +134,12 @@ importers:
 
   examples/with-next:
     dependencies:
-      '@rainbow-me/rainbowkit':
-        specifier: workspace:*
-        version: link:../../packages/rainbowkit
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      rainbowkit-deputy:
+        specifier: workspace:*
+        version: link:../../packages/rainbowkit
       siwe:
         specifier: ^2.1.4
         version: 2.1.4(ethers@5.6.8)
