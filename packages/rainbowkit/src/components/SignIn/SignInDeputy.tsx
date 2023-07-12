@@ -166,7 +166,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
             } catch (error) {
               setState(x => ({
                 ...x,
-                errorMessage: 'Error verifying signature, please retry! 111',
+                errorMessage: 'Error verifying signature, please retry!',
                 status: 'idle',
               }));
               reject();
@@ -184,7 +184,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       } catch (error) {
         setState(x => ({
           ...x,
-          errorMessage: 'Error signing message, please retry! 222',
+          errorMessage: 'Error signing message, please retry!',
           status: 'idle',
         }));
       }
@@ -220,7 +220,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         if (!window.btc) {
           setState(x => ({
             ...x,
-            errorMessage: 'Error verifying signature, please retry! 111',
+            errorMessage: 'Error verifying signature, please retry!',
             status: 'idle',
           }));
           reject();
@@ -245,7 +245,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         console.log(error);
         setState(x => ({
           ...x,
-          errorMessage: 'Error signing message, please retry! 222',
+          errorMessage: 'Error signing message, please retry!',
           status: 'idle',
         }));
       }
@@ -281,7 +281,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         if (!window.btc) {
           setState(x => ({
             ...x,
-            errorMessage: 'Error verifying signature, please retry! 111',
+            errorMessage: 'Error verifying signature, please retry!',
             status: 'idle',
           }));
           reject();
@@ -300,7 +300,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       } catch (error) {
         setState(x => ({
           ...x,
-          errorMessage: 'Error signing message, please retry! 222',
+          errorMessage: 'Error signing message, please retry!',
           status: 'idle',
         }));
       }
@@ -383,7 +383,6 @@ export function SignIn({ onClose }: { onClose: () => void }) {
             flexDirection="column"
             gap={mobile ? '16' : '12'}
           >
-            <p>connector: {connector?.walletType}</p>
             <Text
               color="modalTextSecondary"
               size={mobile ? '16' : '14'}
