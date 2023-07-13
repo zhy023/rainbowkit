@@ -1,7 +1,5 @@
 import { AppConfig, showConnect, UserSession } from '@stacks/connect';
 // @todo network config
-// import { StacksMainnet } from '@stacks/network';
-// import { StacksTestnet } from '@stacks/network';
 import { Address as ErcAddress } from '@wagmi/core';
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
 import { ethers } from 'ethers';
