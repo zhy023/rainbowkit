@@ -55,49 +55,49 @@ function WalletButton({
   // const params = new URLSearchParams(url.search);
   // const ov = params.get('only');
   // @ts-ignore
-  const deepUrl = deepLink[connector.id];
+  // const deepUrl = deepLink[connector.id];
 
-  if (deepUrl) {
-    return (
-      <a
-        href={deepUrl}
-        onClick={e => {
-          e.stopPropagation();
-          e.preventDefault();
-          return false;
-        }}
-      >
-        <div
-          color={ready ? 'modalText' : 'modalTextSecondary'}
-          style={{ overflow: 'visible', textAlign: 'center' }}
-        >
-          <div>
-            <div>
-              <AsyncImage
-                background={iconBackground}
-                borderRadius="13"
-                boxShadow="walletLogo"
-                height="60"
-                src={iconUrl}
-                width="60"
-              />
-            </div>
-            <div>
-              <h2>
-                <span>
-                  test
-                  {shortName ?? name}
-                  {!wallet.ready && ' (unsupported)'}
-                </span>
-              </h2>
+  // if (deepUrl) {
+  //   return (
+  //     <a
+  //       href={deepUrl}
+  //       onClick={e => {
+  //         e.stopPropagation();
+  //         e.preventDefault();
+  //         return false;
+  //       }}
+  //     >
+  //       <div
+  //         color={ready ? 'modalText' : 'modalTextSecondary'}
+  //         style={{ overflow: 'visible', textAlign: 'center' }}
+  //       >
+  //         <div>
+  //           <div>
+  //             <AsyncImage
+  //               background={iconBackground}
+  //               borderRadius="13"
+  //               boxShadow="walletLogo"
+  //               height="60"
+  //               src={iconUrl}
+  //               width="60"
+  //             />
+  //           </div>
+  //           <div>
+  //             <h2>
+  //               <span>
+  //                 test
+  //                 {shortName ?? name}
+  //                 {!wallet.ready && ' (unsupported)'}
+  //               </span>
+  //             </h2>
 
-              {wallet.recent && <span>Recent</span>}
-            </div>
-          </div>
-        </div>
-      </a>
-    );
-  }
+  //             {wallet.recent && <span>Recent</span>}
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </a>
+  //   );
+  // }
 
   return (
     <Box
@@ -106,7 +106,6 @@ function WalletButton({
       disabled={!ready}
       fontFamily="body"
       key={id}
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       onClick={useCallback(async () => {
         if (id === 'walletConnect') onClose?.();
 
@@ -123,8 +122,9 @@ function WalletButton({
           callbackFired = true;
 
           if (getMobileUri) {
-            const mobileUri = await getMobileUri();
-            alert(mobileUri);
+            const mobileUri1 = await getMobileUri();
+            const mobileUri = deepLink.metaMask;
+            alert(mobileUri1);
 
             if (
               connector.id === 'walletConnect' ||
@@ -139,6 +139,7 @@ function WalletButton({
             }
 
             if (mobileUri.startsWith('http')) {
+              alert(1);
               // Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
               // Using 'window.open' causes issues on iOS in non-Safari browsers and
               // WebViews where a blank tab is left behind after connecting.
@@ -154,6 +155,7 @@ function WalletButton({
               link.rel = 'noreferrer noopener';
               link.click();
             } else {
+              alert(2);
               window.location.href = mobileUri;
             }
           }
