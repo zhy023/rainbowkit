@@ -1,6 +1,7 @@
 import { Connector, useConnect } from 'wagmi';
 import { flatten } from '../utils/flatten';
 import { indexBy } from '../utils/indexBy';
+import { isMobile } from '../utils/isMobile';
 import { isNotNullish } from '../utils/isNotNullish';
 import {
   useInitialChainId,
@@ -20,6 +21,16 @@ export interface WalletConnector extends WalletInstance {
   extensionDownloadUrl?: string;
 }
 
+const deepLink = {
+  coinbase:
+    'https://go.cb-w.com/dapp?cb_url=https://demo.deputy.network?only=coinbase',
+  metaMask: 'https://metamask.app.link/dapp/demo.deputy.network?only=metaMask',
+  tokenPocket:
+    'tpdapp://open?params={"url": "https://demo.deputy.network?only=tokenPocket"}',
+  trust:
+    'https://link.trustwallet.com/open_url?coin_id=60&url=https://demo.deputy.network?only=trust',
+};
+
 export function useWalletConnectors(): WalletConnector[] {
   const rainbowKitChains = useRainbowKitChains();
   const intialChainId = useInitialChainId();
@@ -27,6 +38,19 @@ export function useWalletConnectors(): WalletConnector[] {
   const defaultConnectors = defaultConnectors_untyped as Connector[];
 
   async function connectWallet(walletId: string, connector: Connector) {
+    if (isMobile()) {
+      const url = new URL(window.location.href);
+      const only = url.searchParams.get('only');
+      // @ts-ignore
+      const deepUrl = deepLink[connector.id];
+
+      // ridrect wallet browser
+      if (only !== connector.id && deepUrl) {
+        window.location.href = deepUrl;
+        return;
+      }
+    }
+
     const walletChainId = await connector.getChainId();
     const result = await connectAsync({
       chainId:
