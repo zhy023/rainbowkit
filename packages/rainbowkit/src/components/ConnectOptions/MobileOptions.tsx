@@ -59,21 +59,20 @@ function WalletButton({
 
   if (ov !== connector.id && deepUrl) {
     return (
-      <a href={deepUrl}>
-        <Box
+      <a
+        href={deepUrl}
+        onClick={e => {
+          e.stopPropagation();
+          e.preventDefault();
+          return false;
+        }}
+      >
+        <div
           color={ready ? 'modalText' : 'modalTextSecondary'}
-          disabled={!ready}
-          fontFamily="body"
           style={{ overflow: 'visible', textAlign: 'center' }}
-          width="full"
         >
-          <Box
-            alignItems="center"
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-          >
-            <Box paddingBottom="8" paddingTop="10">
+          <div>
+            <div>
               <AsyncImage
                 background={iconBackground}
                 borderRadius="13"
@@ -82,28 +81,19 @@ function WalletButton({
                 src={iconUrl}
                 width="60"
               />
-            </Box>
-            <Box display="flex" flexDirection="column" textAlign="center">
-              <Text
-                as="h2"
-                color={wallet.ready ? 'modalText' : 'modalTextSecondary'}
-                size="13"
-                weight="medium"
-              >
-                <Box as="span" position="relative">
+            </div>
+            <div>
+              <h2>
+                <span>
                   {shortName ?? name}
                   {!wallet.ready && ' (unsupported)'}
-                </Box>
-              </Text>
+                </span>
+              </h2>
 
-              {wallet.recent && (
-                <Text color="accentColor" size="12" weight="medium">
-                  Recent
-                </Text>
-              )}
-            </Box>
-          </Box>
-        </Box>
+              {wallet.recent && <span>Recent</span>}
+            </div>
+          </div>
+        </div>
       </a>
     );
   }
