@@ -49,6 +49,69 @@ function WalletButton({
   } = wallet;
   const getMobileUri = mobile?.getUri;
   const coolModeRef = useCoolMode(iconUrl);
+  // -----------------------------------------------
+
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  const ov = params.get('only');
+  // @ts-ignore
+  const deepUrl = deepLink[connector.id];
+
+  if (ov !== connector.id && deepUrl) {
+    return (
+      <a href={deepUrl}>
+        <Box
+          as="button"
+          color={ready ? 'modalText' : 'modalTextSecondary'}
+          disabled={!ready}
+          fontFamily="body"
+          key={id}
+          ref={coolModeRef}
+          style={{ overflow: 'visible', textAlign: 'center' }}
+          testId={`wallet-option-${id}`}
+          type="button"
+          width="full"
+        >
+          <Box
+            alignItems="center"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+          >
+            <Box paddingBottom="8" paddingTop="10">
+              <AsyncImage
+                background={iconBackground}
+                borderRadius="13"
+                boxShadow="walletLogo"
+                height="60"
+                src={iconUrl}
+                width="60"
+              />
+            </Box>
+            <Box display="flex" flexDirection="column" textAlign="center">
+              <Text
+                as="h2"
+                color={wallet.ready ? 'modalText' : 'modalTextSecondary'}
+                size="13"
+                weight="medium"
+              >
+                <Box as="span" position="relative">
+                  {shortName ?? name}
+                  {!wallet.ready && ' (unsupported)'}
+                </Box>
+              </Text>
+
+              {wallet.recent && (
+                <Text color="accentColor" size="12" weight="medium">
+                  Recent
+                </Text>
+              )}
+            </Box>
+          </Box>
+        </Box>
+      </a>
+    );
+  }
 
   return (
     <Box
@@ -57,86 +120,59 @@ function WalletButton({
       disabled={!ready}
       fontFamily="body"
       key={id}
-      onClick={useCallback(
-        async (e: any) => {
-          // -----------------------------------------------
-          // const url = new URL(window.location.href);
-          // const params = new URLSearchParams(url.search);
-          // const ov = params.get('only');
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      onClick={useCallback(async () => {
+        if (id === 'walletConnect') onClose?.();
 
-          // @ts-ignore
-          const deepUrl = deepLink[connector.id];
+        connect?.();
 
-          // ridrect wallet browser
-          if (deepUrl) {
-            // const link = document.createElement('a');
-            // link.href = deepUrl;
-            // link.target = '_blank';
-            // link.rel = 'noreferrer noopener';
-            // link.click();
-            window.location.href = deepUrl;
+        // We need to guard against "onConnecting" callbacks being fired
+        // multiple times since connector instances can be shared between
+        // wallets. Ideally wagmi would let us scope the callback to the
+        // specific "connect" call, but this will work in the meantime.
+        let callbackFired = false;
 
-            // window.location.href = deepUrl;
-            e.stopPropagation?.();
-            e.preventDefault?.();
-            return false;
-          }
+        onConnecting?.(async () => {
+          if (callbackFired) return;
+          callbackFired = true;
 
-          // -----------------------------------------------
+          if (getMobileUri) {
+            const mobileUri = await getMobileUri();
+            alert(mobileUri);
 
-          if (id === 'walletConnect') onClose?.();
-
-          connect?.();
-
-          // We need to guard against "onConnecting" callbacks being fired
-          // multiple times since connector instances can be shared between
-          // wallets. Ideally wagmi would let us scope the callback to the
-          // specific "connect" call, but this will work in the meantime.
-          let callbackFired = false;
-
-          onConnecting?.(async () => {
-            if (callbackFired) return;
-            callbackFired = true;
-
-            if (getMobileUri) {
-              const mobileUri = await getMobileUri();
-              alert(mobileUri);
-
-              if (
-                connector.id === 'walletConnect' ||
-                connector.id === 'walletConnectLegacy'
-              ) {
-                // In Web3Modal, an equivalent setWalletConnectDeepLink routine gets called after
-                // successful connection and then the universal provider uses it on requests. We call
-                // it upon onConnecting; this now needs to be called for both v1 and v2 Wagmi connectors.
-                // The `connector` type refers to Wagmi connectors, as opposed to RainbowKit wallet connectors.
-                // https://github.com/WalletConnect/web3modal/blob/27f2b1fa2509130c5548061816c42d4596156e81/packages/core/src/utils/CoreUtil.ts#L72
-                setWalletConnectDeepLink({ mobileUri, name });
-              }
-
-              if (mobileUri.startsWith('http')) {
-                // Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
-                // Using 'window.open' causes issues on iOS in non-Safari browsers and
-                // WebViews where a blank tab is left behind after connecting.
-                // This is especially bad in some WebView scenarios (e.g. following a
-                // link from Twitter) where the user doesn't have any mechanism for
-                // closing the blank tab.
-                // For whatever reason, links with a target of "_blank" don't suffer
-                // from this problem, and programmatically clicking a detached link
-                // element with the same attributes also avoids the issue.
-                const link = document.createElement('a');
-                link.href = mobileUri;
-                link.target = '_blank';
-                link.rel = 'noreferrer noopener';
-                link.click();
-              } else {
-                window.location.href = mobileUri;
-              }
+            if (
+              connector.id === 'walletConnect' ||
+              connector.id === 'walletConnectLegacy'
+            ) {
+              // In Web3Modal, an equivalent setWalletConnectDeepLink routine gets called after
+              // successful connection and then the universal provider uses it on requests. We call
+              // it upon onConnecting; this now needs to be called for both v1 and v2 Wagmi connectors.
+              // The `connector` type refers to Wagmi connectors, as opposed to RainbowKit wallet connectors.
+              // https://github.com/WalletConnect/web3modal/blob/27f2b1fa2509130c5548061816c42d4596156e81/packages/core/src/utils/CoreUtil.ts#L72
+              setWalletConnectDeepLink({ mobileUri, name });
             }
-          });
-        },
-        [connector, connect, getMobileUri, onConnecting, onClose, name, id]
-      )}
+
+            if (mobileUri.startsWith('http')) {
+              // Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
+              // Using 'window.open' causes issues on iOS in non-Safari browsers and
+              // WebViews where a blank tab is left behind after connecting.
+              // This is especially bad in some WebView scenarios (e.g. following a
+              // link from Twitter) where the user doesn't have any mechanism for
+              // closing the blank tab.
+              // For whatever reason, links with a target of "_blank" don't suffer
+              // from this problem, and programmatically clicking a detached link
+              // element with the same attributes also avoids the issue.
+              const link = document.createElement('a');
+              link.href = mobileUri;
+              link.target = '_blank';
+              link.rel = 'noreferrer noopener';
+              link.click();
+            } else {
+              window.location.href = mobileUri;
+            }
+          }
+        });
+      }, [connector, connect, getMobileUri, onConnecting, onClose, name, id])}
       ref={coolModeRef}
       style={{ overflow: 'visible', textAlign: 'center' }}
       testId={`wallet-option-${id}`}
