@@ -69,11 +69,8 @@ function WalletButton({
         // ridrect wallet browser
         if (deepUrl) {
           setTimeout(() => {
-            const link = document.createElement('a');
-            link.href = deepUrl;
-            link.target = '_blank';
-            link.rel = 'noreferrer noopener';
-            link.click();
+            alert(deepUrl);
+            window.location.href = deepUrl;
           }, 0);
           return;
         }
