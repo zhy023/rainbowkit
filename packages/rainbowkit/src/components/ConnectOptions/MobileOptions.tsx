@@ -61,15 +61,10 @@ function WalletButton({
     return (
       <a href={deepUrl}>
         <Box
-          as="button"
           color={ready ? 'modalText' : 'modalTextSecondary'}
           disabled={!ready}
           fontFamily="body"
-          key={id}
-          ref={coolModeRef}
           style={{ overflow: 'visible', textAlign: 'center' }}
-          testId={`wallet-option-${id}`}
-          type="button"
           width="full"
         >
           <Box
