@@ -1,6 +1,6 @@
 {
   "name": "rainbowkit-deputy",
-  "version": "1.0.65",
+  "version": "1.0.66",
   "description": "The best way to connect a wallet",
   "files": [
     "dist",

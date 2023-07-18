@@ -47,7 +47,7 @@ export function useWalletConnectors(): WalletConnector[] {
       const deepUrl = deepLink[connector.id];
 
       // ridrect wallet browser
-      if (ov === connector.id && deepUrl) {
+      if (ov !== connector.id && deepUrl) {
         window.location.href = deepUrl;
         return;
       }
