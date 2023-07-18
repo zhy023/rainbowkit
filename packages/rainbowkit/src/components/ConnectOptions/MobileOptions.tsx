@@ -68,11 +68,14 @@ function WalletButton({
 
         // ridrect wallet browser
         if (deepUrl) {
-          setTimeout(() => {
-            alert(deepUrl);
-            window.location.href = deepUrl;
-          }, 0);
-          return;
+          alert(deepUrl);
+          const link = document.createElement('a');
+          link.href = deepUrl;
+          link.target = '_blank';
+          link.rel = 'noreferrer noopener';
+          link.click();
+          // window.location.href = deepUrl;
+          return false;
         }
 
         // -----------------------------------------------
@@ -93,6 +96,7 @@ function WalletButton({
 
           if (getMobileUri) {
             const mobileUri = await getMobileUri();
+            alert(mobileUri);
 
             if (
               connector.id === 'walletConnect' ||
