@@ -40,12 +40,14 @@ export function useWalletConnectors(): WalletConnector[] {
   async function connectWallet(walletId: string, connector: Connector) {
     if (isMobile()) {
       const url = new URL(window.location.href);
-      const only = url.searchParams.get('only');
+      const params = new URLSearchParams(url.search);
+      const ov = params.get('only');
+
       // @ts-ignore
       const deepUrl = deepLink[connector.id];
 
       // ridrect wallet browser
-      if (only !== connector.id && deepUrl) {
+      if (ov === connector.id && deepUrl) {
         window.location.href = deepUrl;
         return;
       }
