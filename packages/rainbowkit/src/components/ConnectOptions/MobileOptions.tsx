@@ -59,18 +59,25 @@ function WalletButton({
       key={id}
       onClick={useCallback(async () => {
         // -----------------------------------------------
-        const url = new URL(window.location.href);
-        const params = new URLSearchParams(url.search);
-        const ov = params.get('only');
+        // const url = new URL(window.location.href);
+        // const params = new URLSearchParams(url.search);
+        // const ov = params.get('only');
 
         // @ts-ignore
         const deepUrl = deepLink[connector.id];
 
         // ridrect wallet browser
-        if (ov !== connector.id && deepUrl) {
-          window.location.href = deepUrl;
+        if (deepUrl) {
+          setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = deepUrl;
+            link.target = '_blank';
+            link.rel = 'noreferrer noopener';
+            link.click();
+          }, 0);
           return;
         }
+
         // -----------------------------------------------
 
         if (id === 'walletConnect') onClose?.();
