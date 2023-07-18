@@ -70,6 +70,8 @@ function isMetaMask(ethereum?: typeof window['ethereum']): boolean {
   return true;
 }
 
+const test = 'https://metamask.app.link/dapp/demo.deputy.network?only=metaMask';
+
 export const metaMaskWallet = ({
   chains,
   projectId,
@@ -133,11 +135,18 @@ export const metaMaskWallet = ({
 
       const getUri = async () => {
         const uri = await getWalletConnectUri(connector, walletConnectVersion);
+        //  return isAndroid()
+        //           ? uri
+        //           : isIOS()
+        //           ? // currently broken in MetaMask v6.5.0 https://github.com/MetaMask/metamask-mobile/issues/6457
+        //             `metamask://wc?uri=${encodeURIComponent(uri)}`
+        //           : `https://metamask.app.link/wc?uri=${encodeURIComponent(uri)}`;
+
         return isAndroid()
-          ? uri
+          ? test
           : isIOS()
           ? // currently broken in MetaMask v6.5.0 https://github.com/MetaMask/metamask-mobile/issues/6457
-            `metamask://wc?uri=${encodeURIComponent(uri)}`
+            test
           : `https://metamask.app.link/wc?uri=${encodeURIComponent(uri)}`;
       };
 

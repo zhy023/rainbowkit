@@ -18,15 +18,15 @@ import { setWalletConnectDeepLink } from '../RainbowKitProvider/walletConnectDee
 import { Text } from '../Text/Text';
 import * as styles from './MobileOptions.css';
 
-const deepLink = {
-  coinbase:
-    'https://go.cb-w.com/dapp?cb_url=https://demo.deputy.network?only=coinbase',
-  metaMask: 'https://metamask.app.link/dapp/demo.deputy.network?only=metaMask',
-  tokenPocket:
-    'tpdapp://open?params={"url": "https://demo.deputy.network?only=tokenPocket"}',
-  trust:
-    'https://link.trustwallet.com/open_url?coin_id=60&url=https://demo.deputy.network?only=trust',
-};
+// const deepLink = {
+//   coinbase:
+//     'https://go.cb-w.com/dapp?cb_url=https://demo.deputy.network?only=coinbase',
+//   metaMask: 'https://metamask.app.link/dapp/demo.deputy.network?only=metaMask',
+//   tokenPocket:
+//     'tpdapp://open?params={"url": "https://demo.deputy.network?only=tokenPocket"}',
+//   trust:
+//     'https://link.trustwallet.com/open_url?coin_id=60&url=https://demo.deputy.network?only=trust',
+// };
 
 function WalletButton({
   onClose,
@@ -58,28 +58,6 @@ function WalletButton({
       fontFamily="body"
       key={id}
       onClick={useCallback(async () => {
-        // -----------------------------------------------
-        // const url = new URL(window.location.href);
-        // const params = new URLSearchParams(url.search);
-        // const ov = params.get('only');
-
-        // @ts-ignore
-        const deepUrl = deepLink[connector.id];
-
-        // ridrect wallet browser
-        if (deepUrl) {
-          alert(deepUrl);
-          const link = document.createElement('a');
-          link.href = deepUrl;
-          link.target = '_blank';
-          link.rel = 'noreferrer noopener';
-          link.click();
-          // window.location.href = deepUrl;
-          return false;
-        }
-
-        // -----------------------------------------------
-
         if (id === 'walletConnect') onClose?.();
 
         connect?.();
