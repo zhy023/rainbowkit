@@ -51,13 +51,13 @@ function WalletButton({
   const coolModeRef = useCoolMode(iconUrl);
   // -----------------------------------------------
 
-  const url = new URL(window.location.href);
-  const params = new URLSearchParams(url.search);
-  const ov = params.get('only');
+  // const url = new URL(window.location.href);
+  // const params = new URLSearchParams(url.search);
+  // const ov = params.get('only');
   // @ts-ignore
   const deepUrl = deepLink[connector.id];
 
-  if (ov !== connector.id && deepUrl) {
+  if (deepUrl) {
     return (
       <a
         href={deepUrl}
@@ -85,6 +85,7 @@ function WalletButton({
             <div>
               <h2>
                 <span>
+                  test
                   {shortName ?? name}
                   {!wallet.ready && ' (unsupported)'}
                 </span>
