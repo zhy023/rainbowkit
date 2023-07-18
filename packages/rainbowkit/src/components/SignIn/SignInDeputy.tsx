@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { signMessage } from 'sats-connect';
+// import { signMessage } from 'sats-connect';
 import { UserRejectedRequestError } from 'viem';
 import { useAccount, useDisconnect, useNetwork, useSignMessage } from 'wagmi';
 import { touchableStyles } from '../../css/touchableStyles';
@@ -47,7 +47,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   }, [getNonce]);
 
   const mobile = isMobile();
-  const { address, connector } = useAccount();
+  const { address } = useAccount();
   const { chain: activeChain } = useNetwork();
   const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();
@@ -120,217 +120,217 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   // ----------------------------------------------------------------------------------
 
-  const signXverse = async () =>
-    new Promise(async (resole, reject) => {
-      const chainId = activeChain?.id;
-      const { nonce } = state;
+  // const signXverse = async () =>
+  //   new Promise(async (resole, reject) => {
+  //     const chainId = activeChain?.id;
+  //     const { nonce } = state;
 
-      if (!address || !chainId || !nonce) {
-        return;
-      }
+  //     if (!address || !chainId || !nonce) {
+  //       return;
+  //     }
 
-      try {
-        setState(x => ({
-          ...x,
-          errorMessage: undefined,
-          status: 'signing',
-        }));
+  //     try {
+  //       setState(x => ({
+  //         ...x,
+  //         errorMessage: undefined,
+  //         status: 'signing',
+  //       }));
 
-        const message = authAdapter.createMessage({
-          address,
-          chainId,
-          nonce,
-        });
-        const signMsg = message.getMessageBody({ message: '' });
-        const signMessageOptions = {
-          onCancel: () => {
-            setState(x => ({
-              ...x,
-              status: 'idle',
-            }));
-            reject();
-          },
-          onFinish: async (signature: string) => {
-            try {
-              const verified = await authAdapter.verify({
-                message: signMsg,
-                signature,
-              });
+  //       const message = authAdapter.createMessage({
+  //         address,
+  //         chainId,
+  //         nonce,
+  //       });
+  //       const signMsg = message.getMessageBody({ message: '' });
+  //       const signMessageOptions = {
+  //         onCancel: () => {
+  //           setState(x => ({
+  //             ...x,
+  //             status: 'idle',
+  //           }));
+  //           reject();
+  //         },
+  //         onFinish: async (signature: string) => {
+  //           try {
+  //             const verified = await authAdapter.verify({
+  //               message: signMsg,
+  //               signature,
+  //             });
 
-              if (verified) {
-                resole(verified);
-                return;
-              } else {
-                throw new Error();
-              }
-            } catch (error) {
-              setState(x => ({
-                ...x,
-                errorMessage: 'Error verifying signature, please retry!',
-                status: 'idle',
-              }));
-              reject();
-            }
-          },
-          payload: {
-            address: connector.btnNetwork.address,
-            message,
-            network: connector.btnNetwork,
-          },
-        };
+  //             if (verified) {
+  //               resole(verified);
+  //               return;
+  //             } else {
+  //               throw new Error();
+  //             }
+  //           } catch (error) {
+  //             setState(x => ({
+  //               ...x,
+  //               errorMessage: 'Error verifying signature, please retry!',
+  //               status: 'idle',
+  //             }));
+  //             reject();
+  //           }
+  //         },
+  //         payload: {
+  //           address: connector.btnNetwork.address,
+  //           message,
+  //           network: connector.btnNetwork,
+  //         },
+  //       };
 
-        setState(x => ({ ...x, status: 'verifying' }));
-        await signMessage(signMessageOptions);
-      } catch (error) {
-        setState(x => ({
-          ...x,
-          errorMessage: 'Error signing message, please retry!',
-          status: 'idle',
-        }));
-      }
-    });
+  //       setState(x => ({ ...x, status: 'verifying' }));
+  //       await signMessage(signMessageOptions);
+  //     } catch (error) {
+  //       setState(x => ({
+  //         ...x,
+  //         errorMessage: 'Error signing message, please retry!',
+  //         status: 'idle',
+  //       }));
+  //     }
+  //   });
+
+  // // ----------------------------------------------------------------------------------
+
+  // const signHiro = async () =>
+  //   new Promise(async (resolve, reject) => {
+  //     const chainId = activeChain?.id;
+  //     const { nonce } = state;
+
+  //     if (!address || !chainId || !nonce) {
+  //       return;
+  //     }
+
+  //     try {
+  //       setState(x => ({
+  //         ...x,
+  //         errorMessage: undefined,
+  //         status: 'signing',
+  //       }));
+
+  //       const message = authAdapter.createMessage({
+  //         address,
+  //         chainId,
+  //         nonce,
+  //       });
+
+  //       const signMsg = authAdapter.getMessageBody({ message });
+
+  //       // @ts-ignore
+  //       if (!window.btc) {
+  //         setState(x => ({
+  //           ...x,
+  //           errorMessage: 'Error verifying signature, please retry!',
+  //           status: 'idle',
+  //         }));
+  //         reject();
+  //       }
+
+  //       setState(x => ({ ...x, status: 'verifying' }));
+
+  //       // @ts-ignore
+  //       const { result } = await window.btc?.request('signMessage', {
+  //         message: signMsg,
+  //         paymentType: 'p2tr', // or 'p2wphk' (default)
+  //       });
+
+  //       const verified = await authAdapter.verify({
+  //         message,
+  //         signature: result.signature,
+  //       });
+
+  //       resolve(verified);
+  //     } catch (error) {
+  //       // eslint-disable-next-line no-console
+  //       console.log(error);
+  //       setState(x => ({
+  //         ...x,
+  //         errorMessage: 'Error signing message, please retry!',
+  //         status: 'idle',
+  //       }));
+  //     }
+  //   });
+
+  // // ----------------------------------------------------------------------------------
+
+  // const signUnisat = async () =>
+  //   new Promise(async (resolve, reject) => {
+  //     const chainId = activeChain?.id;
+  //     const { nonce } = state;
+
+  //     if (!address || !chainId || !nonce) {
+  //       return;
+  //     }
+
+  //     try {
+  //       setState(x => ({
+  //         ...x,
+  //         errorMessage: undefined,
+  //         status: 'signing',
+  //       }));
+
+  //       const message = authAdapter.createMessage({
+  //         address,
+  //         chainId,
+  //         nonce,
+  //       });
+
+  //       const signMsg = authAdapter.getMessageBody({ message });
+
+  //       // @ts-ignore
+  //       if (!window.btc) {
+  //         setState(x => ({
+  //           ...x,
+  //           errorMessage: 'Error verifying signature, please retry!',
+  //           status: 'idle',
+  //         }));
+  //         reject();
+  //       }
+
+  //       setState(x => ({ ...x, status: 'verifying' }));
+
+  //       // @ts-ignore
+  //       const signature = await window.unisat?.signMessage(signMsg);
+  //       const verified = await authAdapter.verify({
+  //         message,
+  //         signature,
+  //       });
+
+  //       resolve(verified);
+  //     } catch (error) {
+  //       setState(x => ({
+  //         ...x,
+  //         errorMessage: 'Error signing message, please retry!',
+  //         status: 'idle',
+  //       }));
+  //     }
+  //   });
 
   // ----------------------------------------------------------------------------------
 
-  const signHiro = async () =>
-    new Promise(async (resolve, reject) => {
-      const chainId = activeChain?.id;
-      const { nonce } = state;
+  // async function signFacrey() {
+  // bitcoin
+  // if (connector?.walletType) {
+  //   // xverse
+  //   if (connector.walletType === 'xverse') {
+  //     await signXverse();
+  //   }
 
-      if (!address || !chainId || !nonce) {
-        return;
-      }
+  //   // hiro
+  //   if (connector.walletType === 'hiro') {
+  //     await signHiro();
+  //   }
 
-      try {
-        setState(x => ({
-          ...x,
-          errorMessage: undefined,
-          status: 'signing',
-        }));
+  //   // unisat
+  //   if (connector.walletType === 'unisat') {
+  //     await signUnisat();
+  //   }
 
-        const message = authAdapter.createMessage({
-          address,
-          chainId,
-          nonce,
-        });
+  //   return;
+  // }
 
-        const signMsg = authAdapter.getMessageBody({ message });
-
-        // @ts-ignore
-        if (!window.btc) {
-          setState(x => ({
-            ...x,
-            errorMessage: 'Error verifying signature, please retry!',
-            status: 'idle',
-          }));
-          reject();
-        }
-
-        setState(x => ({ ...x, status: 'verifying' }));
-
-        // @ts-ignore
-        const { result } = await window.btc?.request('signMessage', {
-          message: signMsg,
-          paymentType: 'p2tr', // or 'p2wphk' (default)
-        });
-
-        const verified = await authAdapter.verify({
-          message,
-          signature: result.signature,
-        });
-
-        resolve(verified);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error);
-        setState(x => ({
-          ...x,
-          errorMessage: 'Error signing message, please retry!',
-          status: 'idle',
-        }));
-      }
-    });
-
-  // ----------------------------------------------------------------------------------
-
-  const signUnisat = async () =>
-    new Promise(async (resolve, reject) => {
-      const chainId = activeChain?.id;
-      const { nonce } = state;
-
-      if (!address || !chainId || !nonce) {
-        return;
-      }
-
-      try {
-        setState(x => ({
-          ...x,
-          errorMessage: undefined,
-          status: 'signing',
-        }));
-
-        const message = authAdapter.createMessage({
-          address,
-          chainId,
-          nonce,
-        });
-
-        const signMsg = authAdapter.getMessageBody({ message });
-
-        // @ts-ignore
-        if (!window.btc) {
-          setState(x => ({
-            ...x,
-            errorMessage: 'Error verifying signature, please retry!',
-            status: 'idle',
-          }));
-          reject();
-        }
-
-        setState(x => ({ ...x, status: 'verifying' }));
-
-        // @ts-ignore
-        const signature = await window.unisat?.signMessage(signMsg);
-        const verified = await authAdapter.verify({
-          message,
-          signature,
-        });
-
-        resolve(verified);
-      } catch (error) {
-        setState(x => ({
-          ...x,
-          errorMessage: 'Error signing message, please retry!',
-          status: 'idle',
-        }));
-      }
-    });
-
-  // ----------------------------------------------------------------------------------
-
-  async function signFacrey() {
-    // bitcoin
-    if (connector?.walletType) {
-      // xverse
-      if (connector.walletType === 'xverse') {
-        await signXverse();
-      }
-
-      // hiro
-      if (connector.walletType === 'hiro') {
-        await signHiro();
-      }
-
-      // unisat
-      if (connector.walletType === 'unisat') {
-        await signUnisat();
-      }
-
-      return;
-    }
-
-    await signIn();
-  }
+  // await signIn();
+  // }
 
   // ----------------------------------------------------------------------------------
 
@@ -424,7 +424,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
                 ? 'Verifying signature...'
                 : 'Sign the message'
             }
-            onClick={signFacrey}
+            onClick={signIn}
             size={mobile ? 'large' : 'medium'}
             testId="auth-message-button"
           />
