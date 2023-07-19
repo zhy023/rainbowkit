@@ -72,6 +72,7 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
           )}
           <Box display="flex" flexDirection="column" gap="4" padding="2">
             {switchNetwork ? (
+<<<<<<< HEAD
               rainbowkitChains.map(({ iconBackground, iconUrl, id }, idx) => {
                 const chain = chains.find(c => c.id === id);
                 if (!chain) return null;
@@ -98,13 +99,36 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
                           flexDirection="row"
                           justifyContent="space-between"
                         >
+=======
+              rainbowkitChains.map(
+                ({ iconBackground, iconUrl, id, name }, idx) => {
+                  const chain = chains.find(c => c.id === id);
+                  if (!chain) return null;
+
+                  const isCurrentChain = chain.id === activeChain?.id;
+                  const switching =
+                    !isCurrentChain && chain.id === pendingChainId;
+
+                  return (
+                    <Fragment key={chain.id}>
+                      <MenuButton
+                        currentlySelected={isCurrentChain}
+                        onClick={
+                          isCurrentChain
+                            ? undefined
+                            : () => switchNetwork(chain.id)
+                        }
+                        testId={`chain-option-${chain.id}`}
+                      >
+                        <Box fontFamily="body" fontSize="16" fontWeight="bold">
+>>>>>>> main
                           <Box
                             alignItems="center"
                             display="flex"
                             flexDirection="row"
-                            gap="4"
-                            height={chainIconSize}
+                            justifyContent="space-between"
                           >
+<<<<<<< HEAD
                             {iconUrl && (
                               <Box height="full" marginRight="8">
                                 <AsyncImage
@@ -130,41 +154,81 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
                                 color="accentColorForeground"
                                 size="14"
                                 weight="medium"
-                              >
-                                Connected
-                              </Text>
-                              <Box
-                                background="connectionIndicator"
-                                borderColor="selectedOptionBorder"
-                                borderRadius="full"
-                                borderStyle="solid"
-                                borderWidth="1"
-                                height="8"
-                                marginLeft="8"
-                                width="8"
-                              />
-                            </Box>
-                          )}
-                          {switching && (
+=======
                             <Box
                               alignItems="center"
                               display="flex"
                               flexDirection="row"
-                              marginRight="6"
+                              gap="4"
+                              height={chainIconSize}
                             >
-                              <Text color="modalText" size="14" weight="medium">
-                                Confirm in Wallet
-                              </Text>
-                              <Box
-                                background="standby"
-                                borderRadius="full"
-                                height="8"
-                                marginLeft="8"
-                                width="8"
-                              />
+                              {iconUrl && (
+                                <Box height="full" marginRight="8">
+                                  <AsyncImage
+                                    alt={name ?? chain.name}
+                                    background={iconBackground}
+                                    borderRadius="full"
+                                    height={chainIconSize}
+                                    src={iconUrl}
+                                    width={chainIconSize}
+                                  />
+                                </Box>
+                              )}
+                              <div>{name ?? chain.name}</div>
                             </Box>
-                          )}
+                            {isCurrentChain && (
+                              <Box
+                                alignItems="center"
+                                display="flex"
+                                flexDirection="row"
+                                marginRight="6"
+                              >
+                                <Text
+                                  color="accentColorForeground"
+                                  size="14"
+                                  weight="medium"
+                                >
+                                  Connected
+                                </Text>
+                                <Box
+                                  background="connectionIndicator"
+                                  borderColor="selectedOptionBorder"
+                                  borderRadius="full"
+                                  borderStyle="solid"
+                                  borderWidth="1"
+                                  height="8"
+                                  marginLeft="8"
+                                  width="8"
+                                />
+                              </Box>
+                            )}
+                            {switching && (
+                              <Box
+                                alignItems="center"
+                                display="flex"
+                                flexDirection="row"
+                                marginRight="6"
+>>>>>>> main
+                              >
+                                <Text
+                                  color="modalText"
+                                  size="14"
+                                  weight="medium"
+                                >
+                                  Confirm in Wallet
+                                </Text>
+                                <Box
+                                  background="standby"
+                                  borderRadius="full"
+                                  height="8"
+                                  marginLeft="8"
+                                  width="8"
+                                />
+                              </Box>
+                            )}
+                          </Box>
                         </Box>
+<<<<<<< HEAD
                       </Box>
                     </MenuButton>
                     {mobile && idx < rainbowkitChains.length - 1 && (
@@ -177,6 +241,20 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
                   </Fragment>
                 );
               })
+=======
+                      </MenuButton>
+                      {mobile && idx < rainbowkitChains.length - 1 && (
+                        <Box
+                          background="generalBorderDim"
+                          height="1"
+                          marginX="8"
+                        />
+                      )}
+                    </Fragment>
+                  );
+                }
+              )
+>>>>>>> main
             ) : (
               <Box
                 background="generalBorder"

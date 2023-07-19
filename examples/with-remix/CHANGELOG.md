@@ -1,8 +1,6 @@
-# with-next
+# with-remix
 
-<<<<<<< HEAD
-=======
-## 0.0.60
+## 0.0.59
 
 ### Patch Changes
 
@@ -10,8 +8,7 @@
 - Updated dependencies [d303a3b9]
   - @rainbow-me/rainbowkit@1.0.7
 
->>>>>>> main
-## 0.0.59
+## 0.0.58
 
 ### Patch Changes
 
@@ -23,7 +20,7 @@
 - Updated dependencies [e089ab98]
   - @rainbow-me/rainbowkit@1.0.6
 
-## 0.0.58
+## 0.0.57
 
 ### Patch Changes
 
@@ -33,21 +30,21 @@
 - Updated dependencies [bfab830]
   - @rainbow-me/rainbowkit@1.0.5
 
-## 0.0.57
+## 0.0.56
 
 ### Patch Changes
 
 - Updated dependencies [6d361b4]
   - @rainbow-me/rainbowkit@1.0.4
 
-## 0.0.56
+## 0.0.55
 
 ### Patch Changes
 
 - Updated dependencies [d00c777]
   - @rainbow-me/rainbowkit@1.0.3
 
-## 0.0.55
+## 0.0.54
 
 ### Patch Changes
 
@@ -55,7 +52,7 @@
 - Updated dependencies [e2b1072]
   - @rainbow-me/rainbowkit@1.0.2
 
-## 0.0.54
+## 0.0.53
 
 ### Patch Changes
 
@@ -63,14 +60,6 @@
 - Updated dependencies [b2c66ff]
 - Updated dependencies [bcb3d18]
   - @rainbow-me/rainbowkit@1.0.1
-
-## 0.0.53
-
-### Patch Changes
-
-- 371c988: Adopted `fs`, `net`, and `tls` polyfills for better `wagmi@1` and `viem` Webpack bundler support.
-
-  These modules are required by WalletConnect packages upstream, and were previously polyfilled by `ethers`. Reference the discussion [here](https://github.com/wagmi-dev/wagmi/issues/2300#issuecomment-1541425648).
 
 ## 0.0.52
 
