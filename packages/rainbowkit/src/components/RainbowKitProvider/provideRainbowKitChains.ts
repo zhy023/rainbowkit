@@ -10,10 +10,7 @@ type ChainName =
   | 'avalancheFuji'
   | 'cronos'
   | 'cronosTestnet'
-<<<<<<< HEAD
-=======
   | 'base'
->>>>>>> main
   | 'baseGoerli'
   | 'bsc'
   | 'bscTestnet'

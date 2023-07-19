@@ -72,34 +72,6 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
           )}
           <Box display="flex" flexDirection="column" gap="4" padding="2">
             {switchNetwork ? (
-<<<<<<< HEAD
-              rainbowkitChains.map(({ iconBackground, iconUrl, id }, idx) => {
-                const chain = chains.find(c => c.id === id);
-                if (!chain) return null;
-
-                const isCurrentChain = chain.id === activeChain?.id;
-                const switching =
-                  !isCurrentChain && chain.id === pendingChainId;
-
-                return (
-                  <Fragment key={chain.id}>
-                    <MenuButton
-                      currentlySelected={isCurrentChain}
-                      onClick={
-                        isCurrentChain
-                          ? undefined
-                          : () => switchNetwork(chain.id)
-                      }
-                      testId={`chain-option-${chain.id}`}
-                    >
-                      <Box fontFamily="body" fontSize="16" fontWeight="bold">
-                        <Box
-                          alignItems="center"
-                          display="flex"
-                          flexDirection="row"
-                          justifyContent="space-between"
-                        >
-=======
               rainbowkitChains.map(
                 ({ iconBackground, iconUrl, id, name }, idx) => {
                   const chain = chains.find(c => c.id === id);
@@ -121,40 +93,12 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
                         testId={`chain-option-${chain.id}`}
                       >
                         <Box fontFamily="body" fontSize="16" fontWeight="bold">
->>>>>>> main
                           <Box
                             alignItems="center"
                             display="flex"
                             flexDirection="row"
                             justifyContent="space-between"
                           >
-<<<<<<< HEAD
-                            {iconUrl && (
-                              <Box height="full" marginRight="8">
-                                <AsyncImage
-                                  alt={chain.name}
-                                  background={iconBackground}
-                                  borderRadius="full"
-                                  height={chainIconSize}
-                                  src={iconUrl}
-                                  width={chainIconSize}
-                                />
-                              </Box>
-                            )}
-                            <div>{chain.name}</div>
-                          </Box>
-                          {isCurrentChain && (
-                            <Box
-                              alignItems="center"
-                              display="flex"
-                              flexDirection="row"
-                              marginRight="6"
-                            >
-                              <Text
-                                color="accentColorForeground"
-                                size="14"
-                                weight="medium"
-=======
                             <Box
                               alignItems="center"
                               display="flex"
@@ -208,7 +152,6 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
                                 display="flex"
                                 flexDirection="row"
                                 marginRight="6"
->>>>>>> main
                               >
                                 <Text
                                   color="modalText"
@@ -228,20 +171,6 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
                             )}
                           </Box>
                         </Box>
-<<<<<<< HEAD
-                      </Box>
-                    </MenuButton>
-                    {mobile && idx < rainbowkitChains.length - 1 && (
-                      <Box
-                        background="generalBorderDim"
-                        height="1"
-                        marginX="8"
-                      />
-                    )}
-                  </Fragment>
-                );
-              })
-=======
                       </MenuButton>
                       {mobile && idx < rainbowkitChains.length - 1 && (
                         <Box
@@ -254,7 +183,6 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
                   );
                 }
               )
->>>>>>> main
             ) : (
               <Box
                 background="generalBorder"

@@ -6,10 +6,7 @@ import { coinbaseWallet } from './coinbaseWallet/coinbaseWallet';
 import { coreWallet } from './coreWallet/coreWallet';
 import { dawnWallet } from './dawnWallet/dawnWallet';
 import { frontierWallet } from './frontierWallet/frontierWallet';
-<<<<<<< HEAD
 // import { hiroWallet } from './hiroWallet/hiroWallet';
-=======
->>>>>>> main
 import { imTokenWallet } from './imTokenWallet/imTokenWallet';
 import { injectedWallet } from './injectedWallet/injectedWallet';
 import { ledgerWallet } from './ledgerWallet/ledgerWallet';
