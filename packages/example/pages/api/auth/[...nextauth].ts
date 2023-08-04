@@ -32,7 +32,11 @@ export function getAuthOptions(req: IncomingMessage): NextAuthOptions {
             return null;
           }
 
-          if (siwe.nonce !== (await getCsrfToken({ req }))) {
+          if (
+            siwe.nonce !==
+            // @ts-ignore
+            (await getCsrfToken({ req: { headers: req.headers } }))
+          ) {
             return null;
           }
 
