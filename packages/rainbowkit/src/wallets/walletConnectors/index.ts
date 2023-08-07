@@ -6,6 +6,7 @@ import { coinbaseWallet } from './coinbaseWallet/coinbaseWallet';
 import { coreWallet } from './coreWallet/coreWallet';
 import { dawnWallet } from './dawnWallet/dawnWallet';
 import { frontierWallet } from './frontierWallet/frontierWallet';
+import { hiroWallet } from './hiroWallet/hiroWallet';
 import { imTokenWallet } from './imTokenWallet/imTokenWallet';
 import { injectedWallet } from './injectedWallet/injectedWallet';
 import { ledgerWallet } from './ledgerWallet/ledgerWallet';
@@ -22,8 +23,10 @@ import { tahoWallet } from './tahoWallet/tahoWallet';
 import { talismanWallet } from './talismanWallet/talismanWallet';
 import { tokenPocketWallet } from './tokenPocketWallet/tokenPocketWallet';
 import { trustWallet } from './trustWallet/trustWallet';
+import { unisatWallet } from './unisatWallet/unisatWallet';
 import { walletConnectWallet } from './walletConnectWallet/walletConnectWallet';
 import { xdefiWallet } from './xdefiWallet/xdefiWallet';
+import { xverseWallet } from './xverseWallet/xverseWallet';
 import { zerionWallet } from './zerionWallet/zerionWallet';
 
 export {
@@ -54,4 +57,7 @@ export {
   walletConnectWallet,
   xdefiWallet,
   zerionWallet,
+  xverseWallet,
+  hiroWallet,
+  unisatWallet,
 };
