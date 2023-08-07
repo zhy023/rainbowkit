@@ -79,6 +79,7 @@ class HiroConnector extends MockConnector {
       }
 
       self.btcNetwork.address = v;
+      walletClient.account.address = v;
     }
 
     return new Promise(async (resolve, reject) => {
