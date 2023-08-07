@@ -1,3 +1,4 @@
+import '@stacks/connect';
 import React, { useCallback, useRef } from 'react';
 import { signMessage } from 'sats-connect';
 import { UserRejectedRequestError } from 'viem';
@@ -215,7 +216,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         const signMsg = authAdapter.getMessageBody({ message });
 
         // @ts-ignore
-        if (!window.btc) {
+        if (!window.StacksProvider) {
           setState(x => ({
             ...x,
             errorMessage: 'Error verifying signature, please retry!',
@@ -227,10 +228,10 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         setState(x => ({ ...x, status: 'verifying' }));
 
         // @ts-ignore
-        const { result } = await window.btc?.request('signMessage', {
+        const { result } = await window.StacksProvider.request('signMessage', {
           message: signMsg,
-          paymentType: 'p2tr', // or 'p2wphk' (default)
-        });
+          network: connector.btcNetwork.network,
+        } as any);
 
         const verified = await authAdapter.verify({
           message,
