@@ -19,10 +19,7 @@ import { Wallet } from '../../Wallet';
 // ----------------------------------------------------------------------------------
 
 export interface HiroOptions {
-  btcNetwork: {
-    network?: 'testnet' | 'mainnet';
-    address?: string;
-  };
+  network: 'testnet' | 'mainnet';
 }
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -42,7 +39,7 @@ class HiroConnector extends MockConnector {
   walletType = 'hiro';
   walletClient = walletClient;
   mockWallet = mockWallet;
-  btcNetwork: HiroOptions['btcNetwork'];
+  btcNetwork: HiroOptions & { address: string };
 
   // ----------------------------------------------------------------------------------
 
@@ -53,7 +50,7 @@ class HiroConnector extends MockConnector {
       },
     });
 
-    this.btcNetwork = options.btcNetwork;
+    this.btcNetwork = Object.assign({ address: '' }, options);
   }
 
   // ----------------------------------------------------------------------------------
@@ -74,6 +71,16 @@ class HiroConnector extends MockConnector {
     };
   }> {
     const self = this;
+
+    function setAddr() {
+      let v = userSession.loadUserData().profile.btcAddress.p2wpkh.mainnet;
+      if (self.btcNetwork?.network === 'testnet') {
+        v = userSession.loadUserData().profile.btcAddress.p2wpkh.testnet;
+      }
+
+      self.btcNetwork.address = v;
+    }
+
     return new Promise(async (resolve, reject) => {
       if (!self.checkDevice()) {
         return;
@@ -82,6 +89,7 @@ class HiroConnector extends MockConnector {
       try {
         // eslint-disable-next-line no-console
         console.log(self);
+
         if (!userSession.isUserSignedIn()) {
           showConnect({
             appDetails: {
@@ -95,15 +103,7 @@ class HiroConnector extends MockConnector {
               });
             },
             onFinish: () => {
-              let addr =
-                userSession.loadUserData().profile.btcAddress.p2wpkh.mainnet;
-              if (self.btcNetwork?.network === 'testnet') {
-                addr =
-                  userSession.loadUserData().profile.btcAddress.p2wpkh.testnet;
-              }
-
-              self.btcNetwork.address = addr;
-
+              setAddr();
               resolve({
                 account: mockWallet.address as ErcAddress,
                 chain: { id: 1, unsupported: false },
@@ -112,6 +112,7 @@ class HiroConnector extends MockConnector {
             userSession,
           });
         } else {
+          setAddr();
           resolve({
             account: mockWallet.address as ErcAddress,
             chain: { id: 1, unsupported: false },

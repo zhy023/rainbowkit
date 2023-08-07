@@ -16,10 +16,7 @@ import { Wallet } from '../../Wallet';
 // ----------------------------------------------------------------------------------
 
 export interface UnisatOptions {
-  btcNetwork: {
-    network?: 'testnet' | 'mainnet';
-    address?: string;
-  };
+  network?: 'testnet' | 'mainnet';
 }
 
 const mockWallet = ethers.Wallet.createRandom();
@@ -37,7 +34,7 @@ class UnisatConnector extends MockConnector {
   walletType = 'unisat';
   walletClient = walletClient;
   mockWallet = mockWallet;
-  btcNetwork: UnisatOptions['btcNetwork'];
+  btcNetwork: UnisatOptions & { address: string };
 
   // ----------------------------------------------------------------------------------
 
@@ -48,7 +45,7 @@ class UnisatConnector extends MockConnector {
       },
     });
 
-    this.btcNetwork = options.btcNetwork;
+    this.btcNetwork = Object.assign({ address: '' }, options);
   }
 
   // ----------------------------------------------------------------------------------
@@ -79,8 +76,6 @@ class UnisatConnector extends MockConnector {
           // @ts-ignore
           const [address] = await window.unisat?.requestAccounts();
           self.btcNetwork.address = address;
-          // @ts-ignore
-          self.btcNetwork.network = window.unisat?.getNetwork();
 
           resolve({
             account: mockWallet.address as ErcAddress,
