@@ -17,7 +17,7 @@ import { Wallet } from '../../Wallet';
 
 export interface UnisatOptions {
   btcNetwork: {
-    network?: number;
+    network?: 'testnet' | 'mainnet';
     address?: string;
   };
 }

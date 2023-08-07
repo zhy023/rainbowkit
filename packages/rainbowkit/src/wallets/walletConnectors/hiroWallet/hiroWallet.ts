@@ -20,7 +20,7 @@ import { Wallet } from '../../Wallet';
 
 export interface HiroOptions {
   btcNetwork: {
-    network?: number;
+    network?: 'testnet' | 'mainnet';
     address?: string;
   };
 }
@@ -80,11 +80,13 @@ class HiroConnector extends MockConnector {
       }
 
       try {
+        // eslint-disable-next-line no-console
+        console.log(self);
         if (!userSession.isUserSignedIn()) {
           showConnect({
             appDetails: {
               icon: 'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
-              name: 'App Name',
+              name: 'Deputy Network',
             },
             onCancel: () => {
               reject({
@@ -93,10 +95,14 @@ class HiroConnector extends MockConnector {
               });
             },
             onFinish: () => {
-              self.btcNetwork.address =
-                userSession.loadUserData().profile.btcAddress.p2wpkh.testnet;
-              self.btcNetwork.network =
-                userSession.loadUserData().profile.btcAddress.p2tr.testnet;
+              let addr =
+                userSession.loadUserData().profile.btcAddress.p2wpkh.mainnet;
+              if (self.btcNetwork?.network === 'testnet') {
+                addr =
+                  userSession.loadUserData().profile.btcAddress.p2wpkh.testnet;
+              }
+
+              self.btcNetwork.address = addr;
 
               resolve({
                 account: mockWallet.address as ErcAddress,
@@ -106,11 +112,6 @@ class HiroConnector extends MockConnector {
             userSession,
           });
         } else {
-          self.btcNetwork.address =
-            userSession.loadUserData().profile.btcAddress.p2wpkh.testnet;
-          self.btcNetwork.network =
-            userSession.loadUserData().profile.btcAddress.p2tr.testnet;
-
           resolve({
             account: mockWallet.address as ErcAddress,
             chain: { id: 1, unsupported: false },

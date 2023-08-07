@@ -1,15 +1,19 @@
 import '../styles/global.css';
 import '@rainbow-me/rainbowkit/styles.css';
+import { ReactNode } from 'react';
 import type { AppProps } from 'next/app';
 import {
   RainbowKitProvider,
   getDefaultWallets,
   connectorsForWallets,
+  RainbowKitAuthenticationProvider,
 } from '@rainbow-me/rainbowkit';
+
 import {
-  argentWallet,
-  trustWallet,
-  ledgerWallet,
+  // argentWallet,
+  // trustWallet,
+  // ledgerWallet,
+  hiroWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
@@ -21,6 +25,7 @@ import {
   goerli,
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { authenticationAdapter } from '../js/auth';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -47,13 +52,14 @@ const demoAppInfo = {
 };
 
 const connectors = connectorsForWallets([
-  ...wallets,
+  // ...wallets,
   {
     groupName: 'Other',
     wallets: [
-      argentWallet({ projectId, chains }),
-      trustWallet({ projectId, chains }),
-      ledgerWallet({ projectId, chains }),
+      hiroWallet({ btcNetwork: {} }),
+      // argentWallet({ projectId, chains }),
+      // trustWallet({ projectId, chains }),
+      // ledgerWallet({ projectId, chains }),
     ],
   },
 ]);
@@ -65,13 +71,32 @@ const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 
+type PropsType = {
+  children: ReactNode;
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
+      <AuthProvider>
         <Component {...pageProps} />
-      </RainbowKitProvider>
+      </AuthProvider>
     </WagmiConfig>
+  );
+}
+
+function AuthProvider(props: PropsType) {
+  const status = 'unauthenticated';
+
+  return (
+    <RainbowKitAuthenticationProvider
+      adapter={authenticationAdapter}
+      status={status}
+    >
+      <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
+        {props.children}
+      </RainbowKitProvider>
+    </RainbowKitAuthenticationProvider>
   );
 }
 
