@@ -23,7 +23,6 @@ const id = 'hiro';
 const name = 'Hiro Wallet';
 const walletClient = createWalletClient({
   // account: ethers.Wallet.createRandom(),
-  account: '',
   chain: mainnet,
   transport: http(),
 });
