@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from 'react';
+
 export interface BtcAddressInfo {
   address: string;
   derivationPath: string;
@@ -20,25 +22,44 @@ export const btcStorageKey = 'dpt_btc_walllet';
 
 // ----------------------------------------------------------------------------------
 
-export function getBtcStore(): BtcAddressInfo {
+export function useBtcStore() {
+  const [btcInfo, setBtcInfo] = useState<BtcAddressInfo>(def);
+
+  useEffect(() => {
+    (function () {
+      setBtcInfo(getBtcStore());
+    })();
+  }, []);
+
+  const setBtcValue = useCallback((value: BtcAddressInfo | null) => {
+    async function set(value: any) {
+      setBtcInfo(value);
+      setBtcStore(value);
+    }
+
+    set(value);
+  }, []);
+
+  const removeBtcValue = useCallback(() => {
+    async function remove() {
+      setBtcInfo(def);
+      setBtcStore(null);
+    }
+
+    remove();
+  }, []);
+
+  return { btcInfo, removeBtcValue, setBtcValue };
+}
+
+// ----------------------------------------------------------------------------------
+
+function getBtcStore(): BtcAddressInfo {
   return getJsonData(
     typeof localStorage !== 'undefined'
       ? localStorage.getItem(btcStorageKey)
       : null
   );
-}
-
-// ----------------------------------------------------------------------------------
-
-export function setBtcStore(data: BtcAddressInfo | null) {
-  if (data) {
-    const old = getBtcStore();
-    const fresh = Object.assign({}, old, data);
-    localStorage.setItem(btcStorageKey, JSON.stringify(fresh));
-    return;
-  }
-
-  localStorage.setItem(btcStorageKey, '');
 }
 
 // ----------------------------------------------------------------------------------
@@ -50,4 +71,17 @@ function getJsonData(string: string | null): BtcAddressInfo {
   } catch (err) {
     return { ...def };
   }
+}
+
+// ----------------------------------------------------------------------------------
+
+function setBtcStore(data: BtcAddressInfo | null) {
+  if (data) {
+    const old = getBtcStore();
+    const fresh = Object.assign({}, old, data);
+    localStorage.setItem(btcStorageKey, JSON.stringify(fresh));
+    return;
+  }
+
+  localStorage.setItem(btcStorageKey, '');
 }

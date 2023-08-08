@@ -67,13 +67,12 @@ class HiroConnector extends MockConnector {
 
   // connect wallet
   async connect(): Promise<{
-    account: any;
-    chain: { id: number; unsupported: boolean };
+    account?: any;
+    chain?: any;
   }> {
     if (!this.checkDevice()) {
       return {
-        account: '',
-        chain: { id: 1, unsupported: true },
+        chain: { id: 0, unsupported: true },
       };
     }
 
@@ -86,28 +85,25 @@ class HiroConnector extends MockConnector {
 
       if (!info) {
         return {
-          account: '',
-          chain: { id: 1, unsupported: true },
+          chain: { id: 0, unsupported: true },
         };
       }
 
       this.btcNetwork = Object.assign(this.btcNetwork, info);
 
       return {
-        account: walletClient.account,
-        chain: { id: 1, unsupported: false },
+        chain: { id: 0, unsupported: false },
       };
     } catch {
       return {
-        account: '',
-        chain: { id: 1, unsupported: true },
+        chain: { id: 0, unsupported: true },
       };
     }
   }
 
   async getProvider() {
     return new MockProvider({
-      chainId: 1,
+      // chainId: 0,
       walletClient,
     });
   }

@@ -3,7 +3,7 @@ import React, { useCallback, useRef } from 'react';
 import { signMessage } from 'sats-connect';
 import { UserRejectedRequestError } from 'viem';
 import { useAccount, useDisconnect, useNetwork, useSignMessage } from 'wagmi';
-import { setBtcStore } from '../../components/RainbowKitProvider/btcStore';
+import { useBtcStore } from '../../components/RainbowKitProvider/btcStore';
 import { touchableStyles } from '../../css/touchableStyles';
 import { isMobile } from '../../utils/isMobile';
 import { AsyncImage } from '../AsyncImage/AsyncImage';
@@ -54,6 +54,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();
   const cancel = () => disconnect();
+  const { setBtcValue } = useBtcStore();
 
   // ----------------------------------------------------------------------------------
 
@@ -241,7 +242,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           signature: result.signature,
         });
 
-        setBtcStore(connector.btcNetwork);
+        setBtcValue(connector.btcNetwork);
         resolve(verified);
       } catch {
         setState(x => ({
