@@ -34,10 +34,10 @@ const name = 'Hiro Wallet';
 
 // hiro connector
 class HiroConnector extends MockConnector {
-  btcNetwork: any;
-  provider?: MockProvider;
-  options?: MockConnectorOptions;
   chains?: Chain[];
+  provider?: MockProvider;
+  options: MockConnectorOptions;
+  btcNetwork: any;
 
   constructor({
     chains,
@@ -70,10 +70,10 @@ class HiroConnector extends MockConnector {
   }
 
   async getProvider({ chainId }: { chainId?: number } = {}) {
-    if (!this.provider || chainId) {
+    if (!this.provider) {
       this.provider = new MockProvider({
         ...this.options,
-        chainId: chainId ?? this.options?.chainId ?? 1,
+        chainId: chainId || this.options.chainId,
       });
     }
 
@@ -81,8 +81,7 @@ class HiroConnector extends MockConnector {
   }
 
   async getWalletClient(): Promise<WalletClient> {
-    const provider = await this.getProvider();
-    return provider.getWalletClient();
+    return this.options.walletClient;
   }
 }
 
