@@ -1,5 +1,7 @@
 import '@stacks/connect';
 import { MockConnector } from '@wagmi/core/connectors/mock';
+import { createTestClient, http } from 'viem';
+import { foundry } from 'viem/chains';
 import { Wallet } from '../../Wallet';
 
 /**
@@ -51,9 +53,18 @@ async function connect(connector: any): Promise<any> {
 
 export const hiroWallet = (options: HiroOptions): Wallet => ({
   createConnector: () => {
-    const connector = new MockConnector();
-    connector.id = id;
-    connector.name = name;
+    const connector = new MockConnector({
+      options: {
+        id,
+        name,
+        walletClient: createTestClient({
+          chain: foundry,
+          mode: 'anvil',
+          transport: http(),
+        }),
+      },
+    });
+
     // eslint-disable-next-line no-console
     console.log(options);
 
