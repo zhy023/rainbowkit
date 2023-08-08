@@ -56,7 +56,7 @@ const connectors = connectorsForWallets([
   {
     groupName: 'Other',
     wallets: [
-      hiroWallet({ btcNetwork: {} }),
+      hiroWallet({ network: 'testnet' }),
       // argentWallet({ projectId, chains }),
       // trustWallet({ projectId, chains }),
       // ledgerWallet({ projectId, chains }),

@@ -1,7 +1,10 @@
 import '@stacks/connect';
-import { MockConnector } from '@wagmi/core/connectors/mock';
+import {
+  MockConnector,
+  MockProviderOptions,
+} from '@wagmi/core/connectors/mock';
 import { createTestClient, http } from 'viem';
-import { foundry } from 'viem/chains';
+import { Chain, foundry } from 'viem/chains';
 import { Wallet } from '../../Wallet';
 
 /**
@@ -18,12 +21,13 @@ export interface HiroOptions {
   network: 'testnet' | 'mainnet';
 }
 
+type MockConnectorOptions = Omit<MockProviderOptions, 'chainId'> & {
+  chainId?: number;
+};
+
 const id = 'hiro';
 const name = 'Hiro Wallet';
 
-// ----------------------------------------------------------------------------------
-
-// hiro connector
 // ----------------------------------------------------------------------------------
 
 function checkDevice() {
@@ -32,34 +36,52 @@ function checkDevice() {
 
 // ----------------------------------------------------------------------------------
 
-// connect wallet
-async function connect(connector: any): Promise<any> {
-  if (!checkDevice()) {
-    return;
+// hiro connector
+class HiroConnector extends MockConnector {
+  btcNetwork: any;
+
+  constructor({
+    chains,
+    options,
+  }: {
+    chains?: Chain[];
+    options: MockConnectorOptions;
+  }) {
+    super({ chains, options });
   }
 
-  const res = await window.StacksProvider?.request('getAddresses');
-  const address = res?.result.addresses ?? [];
-  const info = address.find((addr: { type: string }) => addr.type === 'p2wpkh');
+  async connect() {
+    if (!checkDevice()) {
+      return;
+    }
 
-  if (!info) {
-    return;
+    // await super.connect({ chainId });
+
+    const res = await window.StacksProvider?.request('getAddresses');
+    const address = res?.result.addresses ?? [];
+    const info = address.find(
+      (addr: { type: string }) => addr.type === 'p2wpkh'
+    );
+
+    if (!info) {
+      return;
+    }
+
+    this.btcNetwork = info;
   }
-
-  connector.btcNetwork = info;
 }
 
 // ----------------------------------------------------------------------------------
 
 export const hiroWallet = (options: HiroOptions): Wallet => ({
   createConnector: () => {
-    const connector = new MockConnector({
+    const connector = new HiroConnector({
       options: {
         id,
         name,
         walletClient: createTestClient({
           chain: foundry,
-          mode: 'anvil',
+          mode: 'hardhat',
           transport: http(),
         }),
       },
@@ -72,18 +94,6 @@ export const hiroWallet = (options: HiroOptions): Wallet => ({
 
     return {
       connector,
-      mobile: {
-        getUri: async () => {
-          await connect(connector);
-          return '';
-        },
-      },
-      qrCode: {
-        getUri: async () => {
-          await connect(connector);
-          return '';
-        },
-      },
     };
   },
   downloadUrls: {
