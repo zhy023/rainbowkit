@@ -1,8 +1,5 @@
 import '@stacks/connect';
-import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
-import { ethers } from 'ethers';
-import { createWalletClient, http } from 'viem';
-import { mainnet } from 'wagmi/chains';
+import { MockConnector } from '@wagmi/core/connectors/mock';
 import { Wallet } from '../../Wallet';
 
 /**
@@ -21,108 +18,44 @@ export interface HiroOptions {
 
 const id = 'hiro';
 const name = 'Hiro Wallet';
-const account = ethers.Wallet.createRandom();
-const walletClient = createWalletClient({
-  account,
-  chain: mainnet,
-  transport: http(),
-});
 
 // ----------------------------------------------------------------------------------
 
 // hiro connector
-class HiroConnector extends MockConnector {
-  id = id;
-  name = name;
-  walletClient = walletClient;
-  btcNetwork: HiroOptions & {
-    address: string;
-    derivationPath: string;
-    publicKey: string;
-    symbol: string;
-    type: string;
-  };
+// ----------------------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------------------
+function checkDevice() {
+  return Boolean(window?.StacksProvider);
+}
 
-  constructor(options: HiroOptions) {
-    super({
-      options: {
-        walletClient,
-      },
-    });
+// ----------------------------------------------------------------------------------
 
-    this.btcNetwork = Object.assign(
-      { address: '', derivationPath: '', publicKey: '', symbol: '', type: '' },
-      options
-    );
+// connect wallet
+async function connect(connector: any): Promise<any> {
+  if (!checkDevice()) {
+    return;
   }
 
-  // ----------------------------------------------------------------------------------
+  const res = await window.StacksProvider?.request('getAddresses');
+  const address = res?.result.addresses ?? [];
+  const info = address.find((addr: { type: string }) => addr.type === 'p2wpkh');
 
-  checkDevice() {
-    return Boolean(window?.StacksProvider);
+  if (!info) {
+    return;
   }
 
-  // ----------------------------------------------------------------------------------
-
-  // connect wallet
-  async connect(): Promise<{
-    account?: any;
-    chain?: any;
-  }> {
-    if (!this.checkDevice()) {
-      return {
-        account,
-        chain: { id: 1, unsupported: true },
-      };
-    }
-
-    try {
-      const res = await window.StacksProvider?.request('getAddresses');
-      const address = res?.result.addresses ?? [];
-      const info = address.find(
-        (addr: { type: string }) => addr.type === 'p2wpkh'
-      );
-
-      if (!info) {
-        return {
-          account,
-          chain: { id: 1, unsupported: true },
-        };
-      }
-
-      this.btcNetwork = Object.assign(this.btcNetwork, info);
-
-      return {
-        account,
-        chain: { id: 1, unsupported: false },
-      };
-    } catch {
-      return {
-        account,
-        chain: { id: 1, unsupported: true },
-      };
-    }
-  }
-
-  async getProvider() {
-    return new MockProvider({
-      // chainId: 0,
-      walletClient,
-    });
-  }
-
-  async getWalletClient() {
-    return walletClient;
-  }
+  connector.btcNetwork = info;
 }
 
 // ----------------------------------------------------------------------------------
 
 export const hiroWallet = (options: HiroOptions): Wallet => ({
   createConnector: () => {
-    const connector = new HiroConnector(options);
+    const connector = new MockConnector();
+    connector.id = id;
+    connector.name = name;
+    // eslint-disable-next-line no-console
+    console.log(options);
 
     // ----------------------------------------------------------------------------------
 
@@ -130,13 +63,13 @@ export const hiroWallet = (options: HiroOptions): Wallet => ({
       connector,
       mobile: {
         getUri: async () => {
-          await connector.connect();
+          await connect(connector);
           return '';
         },
       },
       qrCode: {
         getUri: async () => {
-          await connector.connect();
+          await connect(connector);
           return '';
         },
       },
