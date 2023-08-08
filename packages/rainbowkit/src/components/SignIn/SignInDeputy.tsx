@@ -3,6 +3,7 @@ import React, { useCallback, useRef } from 'react';
 import { signMessage } from 'sats-connect';
 import { UserRejectedRequestError } from 'viem';
 import { useAccount, useDisconnect, useNetwork, useSignMessage } from 'wagmi';
+import { setBtcStore } from '../../components/RainbowKitProvider/btcStore';
 import { touchableStyles } from '../../css/touchableStyles';
 import { isMobile } from '../../utils/isMobile';
 import { AsyncImage } from '../AsyncImage/AsyncImage';
@@ -54,6 +55,8 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   const { disconnect } = useDisconnect();
   const cancel = () => disconnect();
 
+  // ----------------------------------------------------------------------------------
+
   const signIn = async () => {
     try {
       const chainId = activeChain?.id;
@@ -102,14 +105,14 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         } else {
           throw new Error();
         }
-      } catch (error) {
+      } catch {
         return setState(x => ({
           ...x,
           errorMessage: 'Error verifying signature, please retry!',
           status: 'idle',
         }));
       }
-    } catch (error) {
+    } catch {
       setState({
         errorMessage: 'Oops, something went wrong!',
         status: 'idle',
@@ -180,7 +183,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
         setState(x => ({ ...x, status: 'verifying' }));
         await signMessage(signMessageOptions);
-      } catch (error) {
+      } catch {
         setState(x => ({
           ...x,
           errorMessage: 'Error signing message, please retry!',
@@ -238,10 +241,9 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           signature: result.signature,
         });
 
+        setBtcStore(connector.btcNetwork);
         resolve(verified);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error);
+      } catch {
         setState(x => ({
           ...x,
           errorMessage: 'Error signing message, please retry!',
@@ -252,79 +254,72 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   // ----------------------------------------------------------------------------------
 
-  const signUnisat = async () =>
-    new Promise(async (resolve, reject) => {
-      const chainId = activeChain?.id;
-      const { nonce } = state;
+  const signUnisat = async () => {
+    const chainId = activeChain?.id;
+    const { nonce } = state;
 
-      if (!address || !chainId || !nonce) {
+    if (!address || !chainId || !nonce) {
+      return;
+    }
+
+    try {
+      setState(x => ({
+        ...x,
+        errorMessage: undefined,
+        status: 'signing',
+      }));
+
+      const message = authAdapter.createMessage({
+        address,
+        chainId,
+        nonce,
+      });
+
+      const signMsg = authAdapter.getMessageBody({ message });
+
+      // @ts-ignore
+      if (!window.btc) {
+        setState(x => ({
+          ...x,
+          errorMessage: 'Error verifying signature, please retry!',
+          status: 'idle',
+        }));
         return;
       }
 
-      try {
-        setState(x => ({
-          ...x,
-          errorMessage: undefined,
-          status: 'signing',
-        }));
+      setState(x => ({ ...x, status: 'verifying' }));
 
-        const message = authAdapter.createMessage({
-          address,
-          chainId,
-          nonce,
-        });
-
-        const signMsg = authAdapter.getMessageBody({ message });
-
-        // @ts-ignore
-        if (!window.btc) {
-          setState(x => ({
-            ...x,
-            errorMessage: 'Error verifying signature, please retry!',
-            status: 'idle',
-          }));
-          reject();
-        }
-
-        setState(x => ({ ...x, status: 'verifying' }));
-
-        // @ts-ignore
-        const signature = await window.unisat?.signMessage(signMsg);
-        const verified = await authAdapter.verify({
-          message,
-          signature,
-        });
-
-        resolve(verified);
-      } catch (error) {
-        setState(x => ({
-          ...x,
-          errorMessage: 'Error signing message, please retry!',
-          status: 'idle',
-        }));
-      }
-    });
+      // @ts-ignore
+      const signature = await window.unisat?.signMessage(signMsg);
+      await authAdapter.verify({
+        message,
+        signature,
+      });
+    } catch {
+      setState(x => ({
+        ...x,
+        errorMessage: 'Error signing message, please retry!',
+        status: 'idle',
+      }));
+    }
+  };
 
   // ----------------------------------------------------------------------------------
 
   async function signFacrey() {
-    if (connector?.walletType) {
-      // xverse
-      if (connector.walletType === 'xverse') {
-        await signXverse();
-      }
+    // xverse
+    if (connector.id === 'xverse') {
+      await signXverse();
+    }
 
-      // hiro
-      if (connector.walletType === 'hiro') {
-        await signHiro();
-      }
+    // hiro
+    if (connector.id === 'hiro') {
+      await signHiro();
+    }
 
-      // unisat
-      if (connector.walletType === 'unisat') {
-        await signUnisat();
-      }
-
-      return;
+    // unisat
+    if (connector.id === 'unisat') {
+      await signUnisat();
     }
 
     await signIn();

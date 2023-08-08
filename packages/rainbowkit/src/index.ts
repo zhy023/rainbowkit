@@ -12,6 +12,8 @@ export {
   RainbowKitAuthenticationProvider,
   createAuthenticationAdapter,
 } from './components/RainbowKitProvider/AuthenticationContext';
+export { useBtcAddressInfo } from './components/RainbowKitProvider/BtcProvider';
+export type { BtcAddressInfo } from './components/RainbowKitProvider/btcStore';
 export type { Wallet, WalletList } from './wallets/Wallet';
 export type { Chain } from './components/RainbowKitProvider/RainbowKitChainContext';
 export type { Theme } from './components/RainbowKitProvider/RainbowKitProvider';

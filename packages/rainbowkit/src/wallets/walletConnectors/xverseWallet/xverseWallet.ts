@@ -1,4 +1,3 @@
-import { Address as ErcAddress } from '@wagmi/core';
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
 import { ethers } from 'ethers';
 import {
@@ -8,7 +7,7 @@ import {
   getAddress,
   GetAddressResponse,
 } from 'sats-connect';
-import { Address, createWalletClient, http } from 'viem';
+import { createWalletClient, http } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { Wallet } from '../../Wallet';
 
@@ -26,10 +25,10 @@ export interface XverseOptions {
   btcNetwork: BitcoinNetwork;
 }
 
-const mockWallet = ethers.Wallet.createRandom();
-
+const id = 'xverse';
+const name = 'Xverse Wallet';
 const walletClient = createWalletClient({
-  account: mockWallet.address as Address,
+  account: ethers.Wallet.createRandom(),
   chain: mainnet,
   transport: http(),
 });
@@ -38,9 +37,9 @@ const walletClient = createWalletClient({
 
 // xverse connector
 class XverseConnector extends MockConnector {
-  walletType = 'xverse';
+  id = id;
+  name = name;
   walletClient = walletClient;
-  mockWallet = mockWallet;
   btcNetwork: BitcoinNetwork;
 
   // ----------------------------------------------------------------------------------
@@ -59,46 +58,38 @@ class XverseConnector extends MockConnector {
 
   // connect wallet
   async connect(): Promise<{
-    account: ErcAddress;
+    account: any;
     chain: {
       id: number;
       unsupported: boolean;
     };
   }> {
-    const self = this;
-    return new Promise(async (resole, reject) => {
-      try {
-        await getAddress({
-          onCancel: () => {
-            reject({
-              account: '',
-              chain: { id: 1, unsupported: false },
-            });
-          },
-          onFinish: (res: GetAddressResponse) => {
-            const v = res.addresses.find(item => item.purpose === 'payment');
+    try {
+      await getAddress({
+        onCancel: () => {},
+        onFinish: (res: GetAddressResponse) => {
+          const v = res.addresses.find(item => item.purpose === 'payment');
 
-            // save btc address
-            self.btcNetwork.address = (v as BtcAddress)?.address;
+          // save btc address
+          this.btcNetwork.address = (v as BtcAddress)?.address;
+        },
+        payload: {
+          message: 'Connect Xverse wallet',
+          network: this.btcNetwork,
+          purposes: [AddressPurposes.ORDINALS, AddressPurposes.PAYMENT],
+        },
+      });
 
-            resole({
-              account: mockWallet.address as ErcAddress,
-              chain: { id: 1, unsupported: false },
-            });
-          },
-          payload: {
-            message: 'Connect Xverse wallet',
-            network: self.btcNetwork,
-            purposes: [AddressPurposes.ORDINALS, AddressPurposes.PAYMENT],
-          },
-        });
-      } catch (e: any) {
-        reject({
-          account: '',
-          chain: { id: 0, unsupported: false },
-        });
-      }
-    });
+      return {
+        account: walletClient.account,
+        chain: { id: 1, unsupported: false },
+      };
+    } catch (e: any) {
+      return {
+        account: '',
+        chain: { id: 1, unsupported: true },
+      };
+    }
   }
 
   async getProvider() {
@@ -152,7 +143,7 @@ export const xverseWallet = (options: XverseOptions): Wallet => ({
   iconUrl:
     'https://play-lh.googleusercontent.com/UiUoRVY5QVI5DAZyP5s6xanuPRrd8HNbKGpjKt3HVPVuT6VJcnXVqR7V4ICQ9rYRCg',
 
-  id: 'xverse-wallet',
+  id,
 
-  name: 'Xverse Wallet',
+  name,
 });

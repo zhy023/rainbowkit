@@ -7,6 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import { useAccount } from 'wagmi';
+import { setBtcStore } from '../../components/RainbowKitProvider/btcStore';
 
 export type AuthenticationStatus =
   | 'loading'
@@ -58,6 +59,7 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
   useAccount({
     onDisconnect: () => {
       adapter.signOut();
+      setBtcStore(null);
     },
   });
 
@@ -74,6 +76,7 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
 
     if (isDisconnected && status === 'authenticated') {
       adapter.signOut();
+      setBtcStore(null);
     }
   }, [status, adapter, isDisconnected]);
 

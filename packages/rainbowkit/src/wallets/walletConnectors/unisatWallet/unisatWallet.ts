@@ -1,7 +1,6 @@
-import { Address as ErcAddress } from '@wagmi/core';
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
 import { ethers } from 'ethers';
-import { Address, createWalletClient, http } from 'viem';
+import { createWalletClient, http } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { Wallet } from '../../Wallet';
 
@@ -18,11 +17,10 @@ import { Wallet } from '../../Wallet';
 export interface UnisatOptions {
   network?: 'testnet' | 'mainnet';
 }
-
-const mockWallet = ethers.Wallet.createRandom();
-
+const id = 'unisat';
+const name = 'Unisat Wallet';
 const walletClient = createWalletClient({
-  account: mockWallet.address as Address,
+  account: ethers.Wallet.createRandom(),
   chain: mainnet,
   transport: http(),
 });
@@ -31,9 +29,9 @@ const walletClient = createWalletClient({
 
 // unisat connector
 class UnisatConnector extends MockConnector {
-  walletType = 'unisat';
+  id = id;
+  name = name;
   walletClient = walletClient;
-  mockWallet = mockWallet;
   btcNetwork: UnisatOptions & { address: string };
 
   // ----------------------------------------------------------------------------------
@@ -59,41 +57,27 @@ class UnisatConnector extends MockConnector {
 
   // connect wallet
   async connect(): Promise<{
-    account: ErcAddress;
+    account: any;
     chain: {
       id: number;
       unsupported: boolean;
     };
   }> {
-    const self = this;
-    return new Promise(async (resolve, reject) => {
-      // if (!self.checkDevice()) {
-      //   return;
-      // }
+    try {
+      // @ts-ignore
+      const [address] = await window.unisat?.requestAccounts();
+      this.btcNetwork.address = address;
 
-      try {
-        try {
-          // @ts-ignore
-          const [address] = await window.unisat?.requestAccounts();
-          self.btcNetwork.address = address;
-
-          resolve({
-            account: mockWallet.address as ErcAddress,
-            chain: { id: 1, unsupported: false },
-          });
-        } catch (e) {
-          reject({
-            account: '',
-            chain: { id: 0, unsupported: false },
-          });
-        }
-      } catch (e: any) {
-        reject({
-          account: '',
-          chain: { id: 0, unsupported: false },
-        });
-      }
-    });
+      return {
+        account: walletClient.account,
+        chain: { id: 1, unsupported: false },
+      };
+    } catch (e) {
+      return {
+        account: '',
+        chain: { id: 0, unsupported: true },
+      };
+    }
   }
 
   async getProvider() {
@@ -146,7 +130,7 @@ export const unisatWallet = (options: UnisatOptions): Wallet => ({
   iconUrl:
     'https://lh3.googleusercontent.com/FpdgjbCU_f4VZUrc3uNC7RY70OIrDpn1bQM-eSw9tIgaGtztz7A_REOwDCxFsZMWnw43IWCEn9PtD2A8Y0env7lB2OU',
 
-  id: 'unisat-wallet',
+  id,
 
-  name: 'Unisat Wallet',
+  name,
 });

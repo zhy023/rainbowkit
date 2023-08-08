@@ -1,10 +1,7 @@
-// import { AppConfig, showConnect, UserSession } from '@stacks/connect';
 import '@stacks/connect';
-// @todo network config
-import { Address as ErcAddress } from '@wagmi/core';
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
 import { ethers } from 'ethers';
-import { Address, createWalletClient, http } from 'viem';
+import { createWalletClient, http } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { Wallet } from '../../Wallet';
 
@@ -21,13 +18,11 @@ import { Wallet } from '../../Wallet';
 export interface HiroOptions {
   network: 'testnet' | 'mainnet';
 }
-// const appConfig = new AppConfig(['store_write', 'publish_data']);
-// const userSession = new UserSession({ appConfig });
 
-const mockWallet = ethers.Wallet.createRandom();
-
+const id = 'hiro';
+const name = 'Hiro Wallet';
 const walletClient = createWalletClient({
-  account: mockWallet.address as Address,
+  account: ethers.Wallet.createRandom(),
   chain: mainnet,
   transport: http(),
 });
@@ -36,9 +31,9 @@ const walletClient = createWalletClient({
 
 // hiro connector
 class HiroConnector extends MockConnector {
-  walletType = 'hiro';
+  id = id;
+  name = name;
   walletClient = walletClient;
-  mockWallet = mockWallet;
   btcNetwork: HiroOptions & {
     address: string;
     derivationPath: string;
@@ -65,7 +60,6 @@ class HiroConnector extends MockConnector {
   // ----------------------------------------------------------------------------------
 
   checkDevice() {
-    // @ts-ignore
     return Boolean(window?.StacksProvider);
   }
 
@@ -73,7 +67,7 @@ class HiroConnector extends MockConnector {
 
   // connect wallet
   async connect(): Promise<{
-    account: ErcAddress;
+    account: any;
     chain: { id: number; unsupported: boolean };
   }> {
     if (!this.checkDevice()) {
@@ -82,17 +76,6 @@ class HiroConnector extends MockConnector {
         chain: { id: 1, unsupported: true },
       };
     }
-
-    // const self = this;
-
-    // function setAddr() {
-    //   let v = userSession.loadUserData().profile.btcAddress.p2wpkh.mainnet;
-    //   if (self.btcNetwork?.network === 'testnet') {
-    //     v = userSession.loadUserData().profile.btcAddress.p2wpkh.testnet;
-    //   }
-
-    //   self.btcNetwork.address = v;
-    // }
 
     try {
       const res = await window.StacksProvider?.request('getAddresses');
@@ -108,65 +91,18 @@ class HiroConnector extends MockConnector {
         };
       }
 
-      // eslint-disable-next-line no-console
-      console.log(info);
-
       this.btcNetwork = Object.assign(this.btcNetwork, info);
 
       return {
-        account: mockWallet.address as ErcAddress,
+        account: walletClient.account,
         chain: { id: 1, unsupported: false },
       };
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-
+    } catch {
       return {
         account: '',
-        chain: { id: 0, unsupported: true },
+        chain: { id: 1, unsupported: true },
       };
     }
-
-    // return new Promise(async (resolve, reject) => {
-    //   if (!self.checkDevice()) {
-    //     return;
-    //   }
-
-    //   try {
-    //     // eslint-disable-next-line no-console
-    //     console.log(self);
-
-    //     if (!userSession.isUserSignedIn()) {
-    //       showConnect({
-    //         appDetails: {
-    //           icon: 'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
-    //           name: 'Deputy Network',
-    //         },
-    //         onCancel: () => {
-    //           reject({
-    //             account: '',
-    //             chain: { id: 0, unsupported: false },
-    //           });
-    //         },
-    //         onFinish: () => {
-    //           setAddr();
-    //         },
-    //         userSession,
-    //       });
-    //     } else {
-    //       setAddr();
-    //       resolve({
-    //         account: mockWallet.address as ErcAddress,
-    //         chain: { id: 1, unsupported: false },
-    //       });
-    //     }
-    //   } catch (e: any) {
-    //     reject({
-    //       account: '',
-    //       chain: { id: 0, unsupported: false },
-    //     });
-    //   }
-    // });
   }
 
   async getProvider() {
@@ -205,20 +141,17 @@ export const hiroWallet = (options: HiroOptions): Wallet => ({
       },
     };
   },
-
   downloadUrls: {
     android: 'https://wallet.hiro.so/wallet/install-desktop',
     chrome: 'https://wallet.hiro.so/wallet/install-web',
     ios: 'https://wallet.hiro.so/wallet/install-desktop',
     qrCode: 'https://wallet.hiro.so/#download',
   },
-
   iconBackground: '#000000',
-
   iconUrl:
     'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
 
-  id: 'hiro-wallet',
+  id,
 
-  name: 'Hiro Wallet',
+  name,
 });
