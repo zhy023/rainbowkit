@@ -1,10 +1,10 @@
-import { AppConfig, showConnect, UserSession } from '@stacks/connect';
+// import { AppConfig, showConnect, UserSession } from '@stacks/connect';
+import '@stacks/connect';
 // @todo network config
 import { Address as ErcAddress } from '@wagmi/core';
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
 import { ethers } from 'ethers';
 import { Address, createWalletClient, http } from 'viem';
-
 import { mainnet } from 'wagmi/chains';
 import { Wallet } from '../../Wallet';
 
@@ -21,8 +21,8 @@ import { Wallet } from '../../Wallet';
 export interface HiroOptions {
   network: 'testnet' | 'mainnet';
 }
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
+// const appConfig = new AppConfig(['store_write', 'publish_data']);
+// const userSession = new UserSession({ appConfig });
 
 const mockWallet = ethers.Wallet.createRandom();
 
@@ -39,7 +39,13 @@ class HiroConnector extends MockConnector {
   walletType = 'hiro';
   walletClient = walletClient;
   mockWallet = mockWallet;
-  btcNetwork: HiroOptions & { address: string };
+  btcNetwork: HiroOptions & {
+    address: string;
+    derivationPath: string;
+    publicKey: string;
+    symbol: string;
+    type: string;
+  };
 
   // ----------------------------------------------------------------------------------
 
@@ -50,14 +56,17 @@ class HiroConnector extends MockConnector {
       },
     });
 
-    this.btcNetwork = Object.assign({ address: '' }, options);
+    this.btcNetwork = Object.assign(
+      { address: '', derivationPath: '', publicKey: '', symbol: '', type: '' },
+      options
+    );
   }
 
   // ----------------------------------------------------------------------------------
 
   checkDevice() {
     // @ts-ignore
-    return Boolean(window?.HiroWalletProvider);
+    return Boolean(window?.StacksProvider);
   }
 
   // ----------------------------------------------------------------------------------
@@ -65,67 +74,99 @@ class HiroConnector extends MockConnector {
   // connect wallet
   async connect(): Promise<{
     account: ErcAddress;
-    chain: {
-      id: number;
-      unsupported: boolean;
-    };
+    chain: { id: number; unsupported: boolean };
   }> {
-    const self = this;
-
-    function setAddr() {
-      let v = userSession.loadUserData().profile.btcAddress.p2wpkh.mainnet;
-      if (self.btcNetwork?.network === 'testnet') {
-        v = userSession.loadUserData().profile.btcAddress.p2wpkh.testnet;
-      }
-
-      self.btcNetwork.address = v;
-      walletClient.account.address = v;
+    if (!this.checkDevice()) {
+      return {
+        account: '',
+        chain: { id: 1, unsupported: true },
+      };
     }
 
-    return new Promise(async (resolve, reject) => {
-      if (!self.checkDevice()) {
-        return;
-      }
+    // const self = this;
 
-      try {
-        // eslint-disable-next-line no-console
-        console.log(self);
+    // function setAddr() {
+    //   let v = userSession.loadUserData().profile.btcAddress.p2wpkh.mainnet;
+    //   if (self.btcNetwork?.network === 'testnet') {
+    //     v = userSession.loadUserData().profile.btcAddress.p2wpkh.testnet;
+    //   }
 
-        if (!userSession.isUserSignedIn()) {
-          showConnect({
-            appDetails: {
-              icon: 'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
-              name: 'Deputy Network',
-            },
-            onCancel: () => {
-              reject({
-                account: '',
-                chain: { id: 0, unsupported: false },
-              });
-            },
-            onFinish: () => {
-              setAddr();
-              resolve({
-                account: mockWallet.address as ErcAddress,
-                chain: { id: 1, unsupported: false },
-              });
-            },
-            userSession,
-          });
-        } else {
-          setAddr();
-          resolve({
-            account: mockWallet.address as ErcAddress,
-            chain: { id: 1, unsupported: false },
-          });
-        }
-      } catch (e: any) {
-        reject({
+    //   self.btcNetwork.address = v;
+    // }
+
+    try {
+      const res = await window.StacksProvider?.request('getAddresses');
+      const address = res?.result.addresses ?? [];
+      const info = address.find(
+        (addr: { type: string }) => addr.type === 'p2wpkh'
+      );
+
+      if (!info) {
+        return {
           account: '',
-          chain: { id: 0, unsupported: false },
-        });
+          chain: { id: 1, unsupported: true },
+        };
       }
-    });
+
+      // eslint-disable-next-line no-console
+      console.log(info);
+
+      this.btcNetwork = Object.assign(this.btcNetwork, info);
+
+      return {
+        account: mockWallet.address as ErcAddress,
+        chain: { id: 1, unsupported: false },
+      };
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+
+      return {
+        account: '',
+        chain: { id: 0, unsupported: true },
+      };
+    }
+
+    // return new Promise(async (resolve, reject) => {
+    //   if (!self.checkDevice()) {
+    //     return;
+    //   }
+
+    //   try {
+    //     // eslint-disable-next-line no-console
+    //     console.log(self);
+
+    //     if (!userSession.isUserSignedIn()) {
+    //       showConnect({
+    //         appDetails: {
+    //           icon: 'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
+    //           name: 'Deputy Network',
+    //         },
+    //         onCancel: () => {
+    //           reject({
+    //             account: '',
+    //             chain: { id: 0, unsupported: false },
+    //           });
+    //         },
+    //         onFinish: () => {
+    //           setAddr();
+    //         },
+    //         userSession,
+    //       });
+    //     } else {
+    //       setAddr();
+    //       resolve({
+    //         account: mockWallet.address as ErcAddress,
+    //         chain: { id: 1, unsupported: false },
+    //       });
+    //     }
+    //   } catch (e: any) {
+    //     reject({
+    //       account: '',
+    //       chain: { id: 0, unsupported: false },
+    //     });
+    //   }
+    // });
   }
 
   async getProvider() {
