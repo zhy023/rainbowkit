@@ -1,6 +1,6 @@
 import '@stacks/connect';
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
-// import { ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { createWalletClient, http } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { Wallet } from '../../Wallet';
@@ -21,8 +21,9 @@ export interface HiroOptions {
 
 const id = 'hiro';
 const name = 'Hiro Wallet';
+const account = ethers.Wallet.createRandom();
 const walletClient = createWalletClient({
-  // account: ethers.Wallet.createRandom(),
+  account,
   chain: mainnet,
   transport: http(),
 });
@@ -72,7 +73,8 @@ class HiroConnector extends MockConnector {
   }> {
     if (!this.checkDevice()) {
       return {
-        chain: { id: 0, unsupported: true },
+        account,
+        chain: { id: 1, unsupported: true },
       };
     }
 
@@ -85,18 +87,21 @@ class HiroConnector extends MockConnector {
 
       if (!info) {
         return {
-          chain: { id: 0, unsupported: true },
+          account,
+          chain: { id: 1, unsupported: true },
         };
       }
 
       this.btcNetwork = Object.assign(this.btcNetwork, info);
 
       return {
-        chain: { id: 0, unsupported: false },
+        account,
+        chain: { id: 1, unsupported: false },
       };
     } catch {
       return {
-        chain: { id: 0, unsupported: true },
+        account,
+        chain: { id: 1, unsupported: true },
       };
     }
   }
