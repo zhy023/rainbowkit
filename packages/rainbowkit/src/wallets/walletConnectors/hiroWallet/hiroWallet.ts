@@ -1,6 +1,8 @@
 import '@stacks/connect';
+import { WalletClient } from '@wagmi/core';
 import {
   MockConnector,
+  MockProvider,
   MockProviderOptions,
 } from '@wagmi/core/connectors/mock';
 import { createTestClient, http } from 'viem';
@@ -30,15 +32,12 @@ const name = 'Hiro Wallet';
 
 // ----------------------------------------------------------------------------------
 
-function checkDevice() {
-  return Boolean(window?.StacksProvider);
-}
-
-// ----------------------------------------------------------------------------------
-
 // hiro connector
 class HiroConnector extends MockConnector {
   btcNetwork: any;
+  provider?: MockProvider;
+  options?: MockConnectorOptions;
+  chains?: Chain[];
 
   constructor({
     chains,
@@ -48,16 +47,16 @@ class HiroConnector extends MockConnector {
     options: MockConnectorOptions;
   }) {
     super({ chains, options });
+    this.chains = chains;
+    this.options = options;
   }
 
   async connect() {
-    if (!checkDevice()) {
+    if (!window?.StacksProvider) {
       return;
     }
 
-    // await super.connect({ chainId });
-
-    const res = await window.StacksProvider?.request('getAddresses');
+    const res = await window.StacksProvider.request('getAddresses');
     const address = res?.result.addresses ?? [];
     const info = address.find(
       (addr: { type: string }) => addr.type === 'p2wpkh'
@@ -68,6 +67,22 @@ class HiroConnector extends MockConnector {
     }
 
     this.btcNetwork = info;
+  }
+
+  async getProvider({ chainId }: { chainId?: number } = {}) {
+    if (!this.provider || chainId) {
+      this.provider = new MockProvider({
+        ...this.options,
+        chainId: chainId ?? this.options?.chainId ?? 1,
+      });
+    }
+
+    return this.provider;
+  }
+
+  async getWalletClient(): Promise<WalletClient> {
+    const provider = await this.getProvider();
+    return provider.getWalletClient();
   }
 }
 
