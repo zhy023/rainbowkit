@@ -25,7 +25,8 @@ import {
   goerli,
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import { authenticationAdapter } from '../js/auth';
+import { useAtom } from 'jotai';
+import { useAuth, authAtom } from '../js/auth';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -86,12 +87,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 function AuthProvider(props: PropsType) {
-  const status = 'unauthenticated';
+  const [auth] = useAtom(authAtom);
+  const { authenticationAdapter } = useAuth();
 
   return (
     <RainbowKitAuthenticationProvider
       adapter={authenticationAdapter}
-      status={status}
+      status={auth}
     >
       <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
         {props.children}
