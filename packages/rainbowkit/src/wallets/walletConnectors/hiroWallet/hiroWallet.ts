@@ -1,6 +1,6 @@
 import '@stacks/connect';
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
-import { ethers } from 'ethers';
+// import { ethers } from 'ethers';
 import { createWalletClient, http } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { Wallet } from '../../Wallet';
@@ -22,7 +22,8 @@ export interface HiroOptions {
 const id = 'hiro';
 const name = 'Hiro Wallet';
 const walletClient = createWalletClient({
-  account: ethers.Wallet.createRandom(),
+  // account: ethers.Wallet.createRandom(),
+  account: '',
   chain: mainnet,
   transport: http(),
 });
