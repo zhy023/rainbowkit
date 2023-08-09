@@ -1,18 +1,73 @@
-import React, { createContext, ReactNode, useContext } from 'react';
-import { BtcAddressInfo, def, useBtcStore } from './btcStore';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { Connector, useAccount } from 'wagmi';
+import { BtcAddressInfo, def, getBtcStore, setBtcStore } from './btcStore';
 
-const BtcWallet = createContext<BtcAddressInfo>({ ...def });
+function useBtcInfoState() {
+  const [btcInfo, setBtcinfo] = useState(() => getBtcStore());
+
+  useEffect(() => {
+    setBtcStore(btcInfo);
+  }, [btcInfo]);
+
+  return {
+    btcInfo,
+    setBtcinfo: useCallback((value: BtcAddressInfo) => setBtcinfo(value), []),
+  };
+}
+
+interface BtcInfoValue {
+  btcInfo: BtcAddressInfo;
+  setBtcinfo?: (value: BtcAddressInfo) => void;
+}
+
+const BtcInfoContext = createContext<BtcInfoValue>({
+  btcInfo: { ...def },
+});
+
+// ----------------------------------------------------------------------------------
+
+function isBitWallet(conn?: Connector) {
+  return ['hiro', 'xverse', 'unisat'].includes(conn?.id);
+}
 
 // ----------------------------------------------------------------------------------
 
 export function BtcProvider(props: { children: ReactNode }) {
-  const { btcInfo } = useBtcStore();
+  const { btcInfo, setBtcinfo } = useBtcInfoState();
 
   return (
-    <BtcWallet.Provider value={btcInfo}>{props.children}</BtcWallet.Provider>
+    <BtcInfoContext.Provider
+      value={useMemo(
+        () => ({
+          btcInfo,
+          setBtcinfo,
+        }),
+        [btcInfo, setBtcinfo]
+      )}
+    >
+      {props.children}
+    </BtcInfoContext.Provider>
   );
 }
 
 // ----------------------------------------------------------------------------------
 
-export const useBtcAddressInfo = () => useContext(BtcWallet);
+export const useAddressCurrent = () => {
+  const { address, connector } = useAccount();
+  const { btcInfo, setBtcinfo } = useContext(BtcInfoContext);
+
+  return {
+    address,
+    btcInfo,
+    isBtcWallet: isBitWallet(connector),
+    setBtcinfo,
+  };
+};

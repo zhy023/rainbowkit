@@ -1,10 +1,11 @@
 import {
   createAuthenticationAdapter,
   AuthenticationStatus,
+  useAddressCurrent,
 } from '@rainbow-me/rainbowkit';
-import { SiweMessage } from 'siwe';
 import { atom, useAtom } from 'jotai';
 import { Connector, useAccount } from 'wagmi';
+import { useEffect } from 'react';
 
 export const authAtom = atom<AuthenticationStatus>('unauthenticated');
 
@@ -32,17 +33,22 @@ class BitMessage {
 
 export function useAuth() {
   const [auth, setAuth] = useAtom(authAtom);
+  const { btcInfo } = useAddressCurrent();
 
-  const { connector } = useAccount({
+  useEffect(() => {
+    console.log(btcInfo);
+  }, [btcInfo]);
+
+  useAccount({
     onConnect(data: any) {
-      if (!data.address) {
-        return;
-      }
+      // if (!data.address) {
+      //   return;
+      // }
 
-      console.log(data.connector);
+      console.log(btcInfo);
 
       if (isBitWallet(data.connector)) {
-        temp.address = data.connector?.btcNetwork.address;
+        temp.address = btcInfo.address;
       } else {
         temp.address = data.address;
       }
@@ -58,19 +64,17 @@ export function useAuth() {
     },
     createMessage: ({ nonce, address, chainId }) => {
       console.log('2');
-      if (isBitWallet(connector)) {
-        return new BitMessage('test');
-      }
+      return new BitMessage('test');
 
-      return new SiweMessage({
-        domain: window.location.host,
-        address,
-        statement: 'Sign in with Ethereum to the app.',
-        uri: window.location.origin,
-        version: '1',
-        chainId,
-        nonce,
-      });
+      // return new SiweMessage({
+      //   domain: window.location.host,
+      //   address,
+      //   statement: 'Sign in with Ethereum to the app.',
+      //   uri: window.location.origin,
+      //   version: '1',
+      //   chainId,
+      //   nonce,
+      // });
     },
     getMessageBody: ({ message }) => {
       console.log('3');
@@ -78,11 +82,6 @@ export function useAuth() {
     },
     verify: async ({ message, signature }) => {
       console.log(message);
-      // const verifyRes = await fetch('/api/verify', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ message, signature }),
-      // });
       setAuth('authenticated');
       return true;
     },

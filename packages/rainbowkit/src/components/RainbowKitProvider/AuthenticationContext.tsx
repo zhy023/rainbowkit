@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import { useAccount } from 'wagmi';
-import { useBtcStore } from '../../components/RainbowKitProvider/btcStore';
+import { useAddressCurrent } from '../../components/RainbowKitProvider/BtcProvider';
 
 export type AuthenticationStatus =
   | 'loading'
@@ -54,13 +54,19 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
   enabled = true,
   status,
 }: RainbowKitAuthenticationProviderProps<Message>) {
-  const { setBtcValue } = useBtcStore();
+  const { setBtcinfo } = useAddressCurrent();
   // When the wallet is disconnected, we want to tell the auth
   // adapter that the user session is no longer active.
   useAccount({
     onDisconnect: () => {
       adapter.signOut();
-      setBtcValue(null);
+      setBtcinfo?.({
+        address: '',
+        derivationPath: '',
+        publicKey: '',
+        symbol: '',
+        type: '',
+      });
     },
   });
 
@@ -77,7 +83,13 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
 
     if (isDisconnected && status === 'authenticated') {
       adapter.signOut();
-      setBtcValue(null);
+      setBtcinfo?.({
+        address: '',
+        derivationPath: '',
+        publicKey: '',
+        symbol: '',
+        type: '',
+      });
     }
   }, [status, adapter, isDisconnected]);
 

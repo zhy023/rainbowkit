@@ -1,12 +1,11 @@
 import '@stacks/connect';
-import { WalletClient } from '@wagmi/core';
+import { MockConnector } from '@wagmi/core/connectors/mock';
+import { createTestClient, http, publicActions, walletActions } from 'viem';
+import { foundry } from 'viem/chains';
 import {
-  MockConnector,
-  MockProvider,
-  MockProviderOptions,
-} from '@wagmi/core/connectors/mock';
-import { createTestClient, http } from 'viem';
-import { Chain, foundry } from 'viem/chains';
+  BtcAddressInfo,
+  def,
+} from '../../../components/RainbowKitProvider/btcStore';
 import { Wallet } from '../../Wallet';
 
 /**
@@ -23,31 +22,35 @@ export interface HiroOptions {
   network: 'testnet' | 'mainnet';
 }
 
-type MockConnectorOptions = Omit<MockProviderOptions, 'chainId'> & {
-  chainId?: number;
-};
-
 const id = 'hiro';
 const name = 'Hiro Wallet';
+const walletClient = createTestClient({
+  account: '',
+  chain: foundry,
+  mode: 'hardhat',
+  transport: http(),
+})
+  .extend(publicActions)
+  .extend(walletActions);
 
 // ----------------------------------------------------------------------------------
 
 // hiro connector
 class HiroConnector extends MockConnector {
-  chains?: Chain[];
-  provider?: MockProvider;
-  options: MockConnectorOptions;
-  btcNetwork: any;
+  id = id;
+  name = name;
+  options: HiroOptions;
+  btcData: BtcAddressInfo = def;
 
-  constructor({
-    chains,
-    options,
-  }: {
-    chains?: Chain[];
-    options: MockConnectorOptions;
-  }) {
-    super({ chains, options });
-    this.chains = chains;
+  constructor(options: HiroOptions) {
+    super({
+      options: {
+        id,
+        name,
+        walletClient,
+      },
+    });
+
     this.options = options;
   }
 
@@ -66,22 +69,7 @@ class HiroConnector extends MockConnector {
       return;
     }
 
-    this.btcNetwork = info;
-  }
-
-  async getProvider({ chainId }: { chainId?: number } = {}) {
-    if (!this.provider) {
-      this.provider = new MockProvider({
-        ...this.options,
-        chainId: chainId || this.options.chainId,
-      });
-    }
-
-    return this.provider;
-  }
-
-  async getWalletClient(): Promise<WalletClient> {
-    return this.options.walletClient;
+    this.btcData = Object.assign(this.options, info);
   }
 }
 
@@ -89,20 +77,7 @@ class HiroConnector extends MockConnector {
 
 export const hiroWallet = (options: HiroOptions): Wallet => ({
   createConnector: () => {
-    const connector = new HiroConnector({
-      options: {
-        id,
-        name,
-        walletClient: createTestClient({
-          chain: foundry,
-          mode: 'hardhat',
-          transport: http(),
-        }),
-      },
-    });
-
-    // eslint-disable-next-line no-console
-    console.log(options);
+    const connector = new HiroConnector(options);
 
     // ----------------------------------------------------------------------------------
 

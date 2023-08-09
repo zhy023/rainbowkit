@@ -14,7 +14,7 @@ export {
 } from './components/RainbowKitProvider/AuthenticationContext';
 export {
   BtcProvider,
-  useBtcAddressInfo,
+  useAddressCurrent,
 } from './components/RainbowKitProvider/BtcProvider';
 export type { BtcAddressInfo } from './components/RainbowKitProvider/btcStore';
 export type { Wallet, WalletList } from './wallets/Wallet';

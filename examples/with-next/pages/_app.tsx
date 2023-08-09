@@ -3,6 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { ReactNode } from 'react';
 import type { AppProps } from 'next/app';
 import {
+  BtcProvider,
   RainbowKitProvider,
   getDefaultWallets,
   connectorsForWallets,
@@ -53,7 +54,7 @@ const demoAppInfo = {
 };
 
 const connectors = connectorsForWallets([
-  // ...wallets,
+  ...wallets,
   {
     groupName: 'Other',
     wallets: [
@@ -79,9 +80,11 @@ type PropsType = {
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <AuthProvider>
-        <Component {...pageProps} />
-      </AuthProvider>
+      <BtcProvider>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </BtcProvider>
     </WagmiConfig>
   );
 }
