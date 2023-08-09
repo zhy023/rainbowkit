@@ -1,5 +1,5 @@
 import '@stacks/connect';
-import { MockConnector } from '@wagmi/core/connectors/mock';
+import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
 import { createTestClient, http, publicActions, walletActions } from 'viem';
 import { foundry } from 'viem/chains';
 import {
@@ -33,6 +33,13 @@ const walletClient = createTestClient({
   .extend(publicActions)
   .extend(walletActions);
 
+const mockProvider = new MockProvider({
+  chainId: foundry.id,
+  id,
+  name,
+  walletClient,
+});
+
 // ----------------------------------------------------------------------------------
 
 // hiro connector
@@ -44,11 +51,7 @@ class HiroConnector extends MockConnector {
 
   constructor(options: HiroOptions) {
     super({
-      options: {
-        id,
-        name,
-        walletClient,
-      },
+      options: { id, name, walletClient },
     });
 
     this.options = options;
@@ -70,6 +73,14 @@ class HiroConnector extends MockConnector {
     }
 
     this.btcData = Object.assign(this.options, info);
+  }
+
+  async getProvider() {
+    return mockProvider;
+  }
+
+  async getWalletClient() {
+    return walletClient;
   }
 }
 
