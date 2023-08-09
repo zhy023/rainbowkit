@@ -63,11 +63,12 @@ export function BtcProvider(props: { children: ReactNode }) {
 export const useAddressCurrent = () => {
   const { address, connector } = useAccount();
   const { btcInfo, setBtcinfo } = useContext(BtcInfoContext);
+  const isBtcWallet = isBitWallet(connector);
 
   return {
-    address,
+    address: isBtcWallet ? btcInfo.address : address,
     btcInfo,
-    isBtcWallet: isBitWallet(connector),
+    isBtcWallet,
     setBtcinfo,
   };
 };
