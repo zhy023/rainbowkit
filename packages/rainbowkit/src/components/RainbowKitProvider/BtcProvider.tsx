@@ -1,3 +1,4 @@
+import '@stacks/connect';
 import React, {
   createContext,
   ReactNode,
@@ -65,10 +66,55 @@ export const useAddressCurrent = () => {
   const { btcInfo, setBtcinfo } = useContext(BtcInfoContext);
   const isBtcWallet = isBitWallet(connector);
 
+  // ----------------------------------------------------------------------------------
+
+  // hiroWallet send token
+  async function sendBtcTransfer(
+    address: string,
+    amount: string
+  ): Promise<string | null> {
+    try {
+      const res = await window.StacksProvider?.request('sendTransfer', {
+        address,
+        amount,
+        network: btcInfo.network,
+      } as any);
+
+      return res?.result?.txid;
+    } catch {
+      return null;
+    }
+  }
+
+  // ----------------------------------------------------------------------------------
+
+  // hiroWallet signMessage
+  async function signBtcMessage(message: string): Promise<{
+    address: string;
+    message: string;
+    signature: string;
+  } | null> {
+    try {
+      const res = await window.StacksProvider?.request('signMessage', {
+        message,
+        network: btcInfo.network,
+      } as any);
+
+      return res?.result;
+    } catch {
+      return null;
+    }
+  }
+
+  // ----------------------------------------------------------------------------------
+
   return {
     address: isBtcWallet ? btcInfo.address : address,
     btcInfo,
     isBtcWallet,
+
+    sendBtcTransfer,
     setBtcinfo,
+    signBtcMessage,
   };
 };

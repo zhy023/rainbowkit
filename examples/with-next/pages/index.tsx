@@ -4,11 +4,16 @@ import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 
 const Home: NextPage = () => {
-  const { btcInfo, isBtcWallet, address } = useAddressCurrent();
+  const { btcInfo, isBtcWallet, address, signBtcMessage } = useAddressCurrent();
   const [v, setV] = useState(false);
   useEffect(() => {
     setV(true);
   }, []);
+
+  async function sign() {
+    const v = await signBtcMessage('test');
+    console.log(v);
+  }
 
   return (
     <div>
@@ -23,9 +28,10 @@ const Home: NextPage = () => {
       </div>
       {v && (
         <div>
-          <p>address: {btcInfo.address}</p>
+          <p>address: {address}</p>
+          <p>btc address: {btcInfo.address}</p>
           <p>btc: {isBtcWallet.toString()}</p>
-          <p>eoa: {address}</p>
+          <button onClick={sign}>sign message</button>
         </div>
       )}
     </div>
