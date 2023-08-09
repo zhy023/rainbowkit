@@ -24,8 +24,11 @@ export interface HiroOptions {
 
 const id = 'hiro';
 const name = 'Hiro Wallet';
+
 const walletClient = createTestClient({
-  account: '',
+  account: {
+    address: '',
+  },
   chain: foundry,
   mode: 'hardhat',
   transport: http(),
