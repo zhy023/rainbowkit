@@ -91,6 +91,7 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
         type: '',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, adapter, isDisconnected]);
 
   return (

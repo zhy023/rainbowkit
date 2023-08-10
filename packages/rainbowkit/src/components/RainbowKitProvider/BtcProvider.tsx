@@ -8,8 +8,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-// @ts-ignore
-import * as fmtBit from 'satoshi-bitcoin';
+import fmtBit from 'satoshi-bitcoin';
 import { Connector, useAccount } from 'wagmi';
 import { BtcAddressInfo, def, getBtcStore, setBtcStore } from './btcStore';
 
