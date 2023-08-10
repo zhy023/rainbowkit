@@ -479,6 +479,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
+      satoshi-bitcoin:
+        specifier: ^v1.0.5
+        version: 1.0.5
       sats-connect:
         specifier: ^0.5.0
         version: 0.5.0
@@ -9910,6 +9913,10 @@ packages:
   /big-integer@1.6.51:
     resolution: {integrity: sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==}
     engines: {node: '>=0.6'}
+    dev: true
+
+  /big.js@3.2.0:
+    resolution: {integrity: sha512-+hN/Zh2D08Mx65pZ/4g5bsmNiZUuChDiQfTUQ7qJr4/kuopCr88xZsAXv6mBoZEsUI4OuGHlX59qE94K2mMW8Q==}
     dev: true
 
   /big.js@5.2.2:
@@ -20277,6 +20284,12 @@ packages:
       neo-async: 2.6.2
       webpack: 5.82.0(esbuild@0.14.39)
     dev: false
+
+  /satoshi-bitcoin@1.0.5:
+    resolution: {integrity: sha512-iCUOSe8yTOqetYcj/n4ziv0psqRMRZT4+YhcMrQIYpjnx3Pgn9uiTlaUItNMMB/0sldINEGkJvxwTW55OfrYPg==}
+    dependencies:
+      big.js: 3.2.0
+    dev: true
 
   /sats-connect@0.5.0:
     resolution: {integrity: sha512-GDhKmkpKyi7jgonC/CZbXWKOddb9XJ7oC87T0fogv5+fcyBa7eIFyEQwY518XkeMdNjLIxioU4EQORm8NTYhaQ==}

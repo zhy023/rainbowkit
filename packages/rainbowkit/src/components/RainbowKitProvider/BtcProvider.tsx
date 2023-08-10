@@ -8,6 +8,8 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+// @ts-ignore
+import * as fmtBit from 'satoshi-bitcoin';
 import { Connector, useAccount } from 'wagmi';
 import { BtcAddressInfo, def, getBtcStore, setBtcStore } from './btcStore';
 
@@ -72,42 +74,33 @@ export const useAddressCurrent = () => {
   async function sendBtcTransfer(
     address: string,
     amount: string
-  ): Promise<string | null> {
-    try {
-      const res = await window.StacksProvider?.request('sendTransfer', {
-        address,
-        amount,
-        network: btcInfo.network,
-      } as any);
+  ): Promise<string | undefined> {
+    const res = await window.StacksProvider?.request('sendTransfer', {
+      address,
+      amount: fmtBit.toSatoshi(amount),
+      network: btcInfo.network,
+    } as any);
 
-      return res?.result?.txid;
-    } catch (e: any) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-      return null;
-    }
+    return res?.result?.txid;
   }
 
   // ----------------------------------------------------------------------------------
 
   // hiroWallet signMessage
-  async function signBtcMessage(message: string): Promise<{
-    address: string;
-    message: string;
-    signature: string;
-  } | null> {
-    try {
-      const res = await window.StacksProvider?.request('signMessage', {
-        message,
-        network: btcInfo.network,
-      } as any);
+  async function signBtcMessage(message: string): Promise<
+    | {
+        address: string;
+        message: string;
+        signature: string;
+      }
+    | undefined
+  > {
+    const res = await window.StacksProvider?.request('signMessage', {
+      message,
+      network: btcInfo.network,
+    } as any);
 
-      return res?.result;
-    } catch (e: any) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-      return null;
-    }
+    return res?.result;
   }
 
   // ----------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 {
-  "name": "rainbowkit-deputy",
-  "version": "1.0.724",
+  "name": "@rainbow-me/rainbowkit",
+  "version": "1.0.725",
   "description": "The best way to connect a wallet",
   "files": [
     "dist",
@@ -66,7 +66,8 @@
     "ethers": "^5.7.2",
     "sats-connect": "^0.5.0",
     "@stacks/connect": "^7.3.1",
-    "@stacks/auth": "^6.7.0"
+    "@stacks/auth": "^6.7.0",
+    "satoshi-bitcoin": "^v1.0.5"
   },
   "dependencies": {
     "@vanilla-extract/css": "1.9.1",
