@@ -45,6 +45,15 @@ const mockProvider = new MockProvider({
 
 // ----------------------------------------------------------------------------------
 
+function isInstall(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window?.StacksProvider !== 'undefined'
+  );
+}
+
+// ----------------------------------------------------------------------------------
+
 // hiro connector
 class HiroConnector extends MockConnector {
   id = id;
@@ -61,11 +70,11 @@ class HiroConnector extends MockConnector {
   }
 
   async connect() {
-    if (!window?.StacksProvider) {
+    if (!window.StacksProvider) {
       return;
     }
 
-    const res = await window.StacksProvider.request('getAddresses');
+    const res = await window.StacksProvider?.request('getAddresses');
     const address = res?.result.addresses ?? [];
     const info = address.find(
       (addr: { type: string }) => addr.type === 'p2wpkh'
@@ -89,27 +98,31 @@ class HiroConnector extends MockConnector {
 
 // ----------------------------------------------------------------------------------
 
-export const hiroWallet = (options: HiroOptions): Wallet => ({
-  createConnector: () => {
-    const connector = new HiroConnector(options);
+export const hiroWallet = (options: HiroOptions): Wallet => {
+  return {
+    createConnector: () => {
+      const connector = new HiroConnector(options);
+      return {
+        connector,
+      };
+    },
+    downloadUrls: {
+      browserExtension: 'https://wallet.hiro.so/#download',
+      chrome: 'https://wallet.hiro.so/wallet/install-web',
+      firefox: 'https://addons.mozilla.org/en-US/firefox/addon/hiro-wallet',
 
-    // ----------------------------------------------------------------------------------
-
-    return {
-      connector,
-    };
-  },
-  downloadUrls: {
-    android: 'https://wallet.hiro.so/wallet/install-desktop',
-    chrome: 'https://wallet.hiro.so/wallet/install-web',
-    ios: 'https://wallet.hiro.so/wallet/install-desktop',
-    qrCode: 'https://wallet.hiro.so/#download',
-  },
-  iconBackground: '#000000',
-  iconUrl:
-    'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
-
-  id,
-
-  name,
-});
+      // android: '',
+      // ios: '',
+      // mobile: '',
+      // qrCode: '',
+      // edge: '',
+      // opera: '',
+    },
+    iconBackground: '#000000',
+    iconUrl:
+      'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
+    id,
+    installed: isInstall(),
+    name,
+  };
+};
