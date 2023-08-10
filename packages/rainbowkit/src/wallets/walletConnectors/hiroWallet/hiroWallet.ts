@@ -45,15 +45,6 @@ const mockProvider = new MockProvider({
 
 // ----------------------------------------------------------------------------------
 
-function isInstall(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    typeof window?.StacksProvider !== 'undefined'
-  );
-}
-
-// ----------------------------------------------------------------------------------
-
 // hiro connector
 class HiroConnector extends MockConnector {
   id = id;
@@ -99,6 +90,10 @@ class HiroConnector extends MockConnector {
 // ----------------------------------------------------------------------------------
 
 export const hiroWallet = (options: HiroOptions): Wallet => {
+  const installed =
+    typeof window !== 'undefined' &&
+    typeof window?.StacksProvider !== 'undefined';
+
   return {
     createConnector: () => {
       const connector = new HiroConnector(options);
@@ -122,7 +117,7 @@ export const hiroWallet = (options: HiroOptions): Wallet => {
     iconUrl:
       'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
     id,
-    installed: isInstall(),
+    installed,
     name,
   };
 };
