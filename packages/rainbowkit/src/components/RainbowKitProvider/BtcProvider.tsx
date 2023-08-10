@@ -81,7 +81,9 @@ export const useAddressCurrent = () => {
       } as any);
 
       return res?.result?.txid;
-    } catch {
+    } catch (e: any) {
+      // eslint-disable-next-line no-console
+      console.log(e);
       return null;
     }
   }
@@ -101,7 +103,9 @@ export const useAddressCurrent = () => {
       } as any);
 
       return res?.result;
-    } catch {
+    } catch (e: any) {
+      // eslint-disable-next-line no-console
+      console.log(e);
       return null;
     }
   }
