@@ -101,7 +101,6 @@ export const hiroWallet = (options: HiroOptions): Wallet => {
   const isHiroInjected =
     typeof window !== 'undefined' &&
     typeof window.StacksProvider !== 'undefined' &&
-    window.StacksProvider &&
     typeof window.StacksProvider?.request !== 'undefined';
   const shouldUseWalletConnect = !isHiroInjected;
 

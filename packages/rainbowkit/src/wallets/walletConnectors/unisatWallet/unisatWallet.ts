@@ -1,8 +1,48 @@
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
-import { ethers } from 'ethers';
-import { createWalletClient, http } from 'viem';
-import { mainnet } from 'wagmi/chains';
+import { createTestClient, http, publicActions, walletActions } from 'viem';
+import { foundry } from 'viem/chains';
+import {
+  BtcAddressInfo,
+  def,
+} from '../../../components/RainbowKitProvider/btcStore';
 import { Wallet } from '../../Wallet';
+
+type Network = 'livenet' | 'testnet';
+
+declare global {
+  interface Window {
+    unisat?: {
+      requestAccounts(): Promise<string[]>;
+      getAccounts(): Promise<string[]>;
+      getNetwork(): Promise<Network>;
+      switchNetwork(v: Network): Promise<void>;
+      getPublicKey(): Promise<string>;
+      getBalance(): Promise<{
+        confirmed: number;
+        unconfirmed: number;
+        total: number;
+      }>;
+      getInscriptions(): Promise<{
+        total: number;
+        list: {
+          inscriptionId: string;
+          inscriptionNumber: string;
+          address: string;
+          outputValue: string;
+          content: string;
+          contentLength: string;
+          contentType: number;
+          preview: number;
+          timestamp: number;
+          offset: number;
+          genesisTransaction: string;
+          location: string;
+        }[];
+      }>;
+      // sendBitcoin(toAddress: string, satoshis: number, options?: { feeRate - number  }): Promise<string>;
+    };
+  }
+}
 
 /**
  * ----------------------------------------------------------------------------------
@@ -15,14 +55,25 @@ import { Wallet } from '../../Wallet';
 // ----------------------------------------------------------------------------------
 
 export interface UnisatOptions {
-  network?: 'testnet' | 'mainnet';
+  network?: Network;
 }
 const id = 'unisat';
 const name = 'Unisat Wallet';
-const walletClient = createWalletClient({
-  account: ethers.Wallet.createRandom(),
-  chain: mainnet,
+const walletClient = createTestClient({
+  account: {
+    address: '',
+  },
+  chain: foundry,
+  mode: 'hardhat',
   transport: http(),
+})
+  .extend(publicActions)
+  .extend(walletActions);
+const mockProvider = new MockProvider({
+  chainId: foundry.id,
+  id,
+  name,
+  walletClient,
 });
 
 // ----------------------------------------------------------------------------------
@@ -31,60 +82,32 @@ const walletClient = createWalletClient({
 class UnisatConnector extends MockConnector {
   id = id;
   name = name;
-  walletClient = walletClient;
-  btcNetwork: UnisatOptions & { address: string };
-
-  // ----------------------------------------------------------------------------------
+  options: UnisatOptions;
+  btcData: BtcAddressInfo = def;
 
   constructor(options: UnisatOptions) {
     super({
-      options: {
-        walletClient,
-      },
+      options: { id, name, walletClient },
     });
 
-    this.btcNetwork = Object.assign({ address: '' }, options);
-  }
-
-  // ----------------------------------------------------------------------------------
-
-  checkDevice() {
-    // @ts-ignore
-    return Boolean(window?.unisat);
+    this.options = options;
   }
 
   // ----------------------------------------------------------------------------------
 
   // connect wallet
-  async connect(): Promise<{
-    account: any;
-    chain: {
-      id: number;
-      unsupported: boolean;
-    };
-  }> {
-    try {
-      // @ts-ignore
-      const [address] = await window.unisat?.requestAccounts();
-      this.btcNetwork.address = address;
-
-      return {
-        account: walletClient.account,
-        chain: { id: 1, unsupported: false },
-      };
-    } catch (e) {
-      return {
-        account: '',
-        chain: { id: 0, unsupported: true },
-      };
+  async connect() {
+    if (typeof window.unisat === 'undefined') {
+      return;
     }
+
+    // @ts-ignore
+    // const [address] = await window.unisat?.requestAccounts();
+    // this.btcData = Object.assign(this.options, { address });
   }
 
   async getProvider() {
-    return new MockProvider({
-      chainId: 1,
-      walletClient,
-    });
+    return mockProvider;
   }
 
   async getWalletClient() {
@@ -94,43 +117,51 @@ class UnisatConnector extends MockConnector {
 
 // ----------------------------------------------------------------------------------
 
-export const unisatWallet = (options: UnisatOptions): Wallet => ({
-  createConnector: () => {
-    const connector = new UnisatConnector(options);
+export const unisatWallet = (options: UnisatOptions): Wallet => {
+  const isUnisatInjected =
+    typeof window !== 'undefined' &&
+    typeof window.unisat !== 'undefined' &&
+    typeof window.unisat?.requestAccounts !== 'undefined';
+  const shouldUseWalletConnect = !isUnisatInjected;
 
-    // ----------------------------------------------------------------------------------
+  return {
+    createConnector: () => {
+      const connector = new UnisatConnector(options);
 
-    return {
-      connector,
-      mobile: {
-        getUri: async () => {
-          await connector.connect();
-          return '';
+      // ----------------------------------------------------------------------------------
+
+      return {
+        connector,
+        mobile: {
+          getUri: async () => {
+            await connector.connect();
+            return '';
+          },
         },
-      },
-      qrCode: {
-        getUri: async () => {
-          await connector.connect();
-          return '';
+        qrCode: {
+          getUri: async () => {
+            await connector.connect();
+            return '';
+          },
         },
-      },
-    };
-  },
+      };
+    },
 
-  downloadUrls: {
-    android: 'https://unisat.io/download',
-    chrome:
-      'https://chrome.google.com/webstore/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo',
-    ios: 'https://unisat.io/download',
-    qrCode: 'https://unisat.io/download',
-  },
+    downloadUrls: {
+      android: 'https://unisat.io/download',
+      chrome:
+        'https://chrome.google.com/webstore/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo',
+      ios: 'https://unisat.io/download',
+      qrCode: 'https://unisat.io/download',
+    },
 
-  iconBackground: '#000000',
+    iconBackground: '#000000',
 
-  iconUrl:
-    'https://lh3.googleusercontent.com/FpdgjbCU_f4VZUrc3uNC7RY70OIrDpn1bQM-eSw9tIgaGtztz7A_REOwDCxFsZMWnw43IWCEn9PtD2A8Y0env7lB2OU',
+    iconUrl:
+      'https://lh3.googleusercontent.com/FpdgjbCU_f4VZUrc3uNC7RY70OIrDpn1bQM-eSw9tIgaGtztz7A_REOwDCxFsZMWnw43IWCEn9PtD2A8Y0env7lB2OU',
 
-  id,
-
-  name,
-});
+    id,
+    installed: !shouldUseWalletConnect ? isUnisatInjected : undefined,
+    name,
+  };
+};
