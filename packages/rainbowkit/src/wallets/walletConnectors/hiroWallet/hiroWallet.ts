@@ -61,21 +61,29 @@ class HiroConnector extends MockConnector {
   }
 
   async connect() {
-    if (!window.StacksProvider) {
+    if (
+      typeof window === 'undefined' ||
+      typeof window.StacksProvider === 'undefined' ||
+      typeof window.StacksProvider?.request === 'undefined'
+    ) {
       return;
     }
 
-    const res = await window.StacksProvider?.request('getAddresses');
-    const address = res?.result.addresses ?? [];
-    const info = address.find(
-      (addr: { type: string }) => addr.type === 'p2wpkh'
-    );
+    try {
+      const res = await window.StacksProvider?.request('getAddresses');
+      const address = res?.result.addresses ?? [];
+      const info = address.find(
+        (addr: { type: string }) => addr.type === 'p2wpkh'
+      );
 
-    if (!info) {
-      return;
+      if (!info) {
+        return;
+      }
+
+      this.btcData = Object.assign(this.options, info);
+    } catch (e: any) {
+      throw new Error(e.message);
     }
-
-    this.btcData = Object.assign(this.options, info);
   }
 
   async getProvider() {
@@ -90,9 +98,12 @@ class HiroConnector extends MockConnector {
 // ----------------------------------------------------------------------------------
 
 export const hiroWallet = (options: HiroOptions): Wallet => {
-  const installed =
+  const isHiroInjected =
     typeof window !== 'undefined' &&
-    typeof window?.StacksProvider !== 'undefined';
+    typeof window.StacksProvider !== 'undefined' &&
+    window.StacksProvider &&
+    typeof window.StacksProvider?.request !== 'undefined';
+  const shouldUseWalletConnect = !isHiroInjected;
 
   return {
     createConnector: () => {
@@ -117,7 +128,7 @@ export const hiroWallet = (options: HiroOptions): Wallet => {
     iconUrl:
       'https://lh3.googleusercontent.com/ZsW7VmclMiIJiIDvfs24j0jum9WM4-a7NlU8Wvievwp6AHj8shlBrX2oZXvNyhWWhMAW6ZJlAlExMDTXvWRipEhZ',
     id,
-    installed,
+    installed: !shouldUseWalletConnect ? isHiroInjected : undefined,
     name,
   };
 };
