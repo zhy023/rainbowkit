@@ -1,5 +1,5 @@
 import '@stacks/connect';
-import * as btc from '@scure/btc-signer';
+// import * as btc from '@scure/btc-signer';
 import React, {
   createContext,
   ReactNode,
@@ -29,21 +29,14 @@ interface BtcInfoValue {
   setBtcinfo?: (value: BtcAddressInfo) => void;
 }
 
-interface SignPsbtRequestParams {
-  publicKey: string;
-  hex: string;
-  // allowedSighash?: SignatureHash[];
-  signAtIndex?: number | number[];
-  network?: BtcAddressInfo['network'];
-  account?: number;
-}
-
-const btcTestnet = {
-  bech32: 'tb',
-  pubKeyHash: 0x6f,
-  scriptHash: 0xc4,
-  wif: 0xef,
-};
+// interface SignPsbtRequestParams {
+//   publicKey: string;
+//   hex: string;
+//   // allowedSighash?: SignatureHash[];
+//   signAtIndex?: number | number[];
+//   network?: BtcAddressInfo['network'];
+//   account?: number;
+// }
 
 function useBtcInfoState() {
   const [btcInfo, setBtcinfo] = useState(() => getBtcStore());
@@ -127,45 +120,38 @@ export const useAddressCurrent = () => {
   // ----------------------------------------------------------------------------------
 
   // hiroWallet send psdt token
-  async function sendBtcPsdt(
-    address: string,
-    amount: string
-  ): Promise<string | undefined> {
-    const api = getApi();
-    const tx = new btc.Transaction();
+  // async function sendBtcPsdt(
+  //   address: string,
+  //   amount: string
+  // ): Promise<string | undefined> {
+  //   const api = getApi();
+  //   const tx = new btc.Transaction();
+  //   const nk = btcInfo.network === 'testnet' ? btc.TEST_NETWORK : btc.NETWORK;
 
-    if (btcInfo.network === 'testnet') {
-      tx.addOutputAddress(address, fmtBit.toSatoshi(amount), btcTestnet);
+  //   const addr1 = new btc.Address(nk).decode(address);
 
-      // 0 tx
-      tx.addOutputAddress(
-        '2MsWXDub5Jdwy4ZkiPTnUrxaSHvdSoW7BDE',
-        fmtBit.toSatoshi('0'),
-        btcTestnet
-      );
-    } else {
-      tx.addOutputAddress(address, fmtBit.toSatoshi(amount));
+  //   tx.addOutputAddress(addr1, fmtBit.toSatoshi(amount), nk);
 
-      // 0 tx
-      tx.addOutputAddress(
-        '2MsWXDub5Jdwy4ZkiPTnUrxaSHvdSoW7BDE',
-        fmtBit.toSatoshi('0')
-      );
-    }
+  //   // 0 tx
+  //   // tx.addOutputAddress(
+  //   //   'tb1q3sh23kf9rfqhyr2usqhkgdqx6cn6k59sg0tg5l',
+  //   //   fmtBit.toSatoshi('0'),
+  //   //   nk
+  //   // );
 
-    const psbt = tx.toPSBT();
-    const hex = psbt.map((n: any) => n.toString(16).padStart(2, '0')).join('');
+  //   const psbt = tx.toPSBT();
+  //   const hex = psbt.map((n: any) => n.toString(16).padStart(2, '0')).join('');
 
-    const requestParams: SignPsbtRequestParams = {
-      hex,
-      network: btcInfo.network,
-      publicKey: btcInfo.publicKey,
-    };
+  //   const requestParams: SignPsbtRequestParams = {
+  //     hex,
+  //     network: btcInfo.network,
+  //     publicKey: btcInfo.publicKey,
+  //   };
 
-    const res = await api?.('signPsbt', requestParams);
+  //   const res = await api?.('signPsbt', requestParams);
 
-    return res?.result?.txid;
-  }
+  //   return res?.result?.txid;
+  // }
 
   // ----------------------------------------------------------------------------------
 
@@ -194,7 +180,6 @@ export const useAddressCurrent = () => {
     btcInfo,
     isBtcWallet,
 
-    sendBtcPsdt,
     sendBtcTransfer,
     setBtcinfo,
     signBtcMessage,

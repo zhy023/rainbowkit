@@ -14,17 +14,25 @@ declare module 'satoshi-bitcoin' {
 }
 
 declare module '@scure/btc-signer' {
+  type Network = {
+    bech32: string;
+    pubKeyHash: number;
+    scriptHash: number;
+    wif: number;
+  };
+
+  export const TEST_NETWORK: Network;
+
+  export const NETWORK: Network;
+
+  export class Address {
+    constructor(network: Network);
+    encode(params: { type: string; pubkey: string }): string;
+    decode(address: string): string;
+  }
+
   export class Transaction {
     toPSBT(): Uint8Array;
-    addOutputAddress(
-      address: string,
-      amount: string,
-      network?: {
-        bech32: string;
-        pubKeyHash: number;
-        scriptHash: number;
-        wif: number;
-      }
-    ): number;
+    addOutputAddress(address: string, amount: string, network: Network): number;
   }
 }
