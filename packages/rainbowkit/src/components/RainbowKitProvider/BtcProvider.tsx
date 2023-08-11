@@ -12,6 +12,22 @@ import fmtBit from 'satoshi-bitcoin';
 import { Connector, useAccount } from 'wagmi';
 import { BtcAddressInfo, def, getBtcStore, setBtcStore } from './btcStore';
 
+declare global {
+  interface Window {
+    HiroWalletProvider?: {
+      request(method: string, params?: any[]): Promise<Record<string, any>>;
+    };
+    btc?: {
+      request(method: string, params?: any[]): Promise<Record<string, any>>;
+    };
+  }
+}
+
+interface BtcInfoValue {
+  btcInfo: BtcAddressInfo;
+  setBtcinfo?: (value: BtcAddressInfo) => void;
+}
+
 function useBtcInfoState() {
   const [btcInfo, setBtcinfo] = useState(() => getBtcStore());
 
@@ -23,11 +39,6 @@ function useBtcInfoState() {
     btcInfo,
     setBtcinfo: useCallback((value: BtcAddressInfo) => setBtcinfo(value), []),
   };
-}
-
-interface BtcInfoValue {
-  btcInfo: BtcAddressInfo;
-  setBtcinfo?: (value: BtcAddressInfo) => void;
 }
 
 const BtcInfoContext = createContext<BtcInfoValue>({
@@ -69,12 +80,25 @@ export const useAddressCurrent = () => {
 
   // ----------------------------------------------------------------------------------
 
+  function getApi(): Function | undefined {
+    // fix request api
+    return (
+      window.StacksProvider?.request ||
+      window.BlockstackProvider?.request ||
+      window.HiroWalletProvider?.request ||
+      window.btc?.request
+    );
+  }
+
+  // ----------------------------------------------------------------------------------
+
   // hiroWallet send token
   async function sendBtcTransfer(
     address: string,
     amount: string
   ): Promise<string | undefined> {
-    const res = await window.StacksProvider?.request('sendTransfer', {
+    const api = getApi();
+    const res = await api?.('sendTransfer', {
       address,
       amount: fmtBit.toSatoshi(amount),
       network: btcInfo.network,
@@ -94,7 +118,8 @@ export const useAddressCurrent = () => {
       }
     | undefined
   > {
-    const res = await window.StacksProvider?.request('signMessage', {
+    const api = getApi();
+    const res = await api?.('signMessage', {
       message,
       network: btcInfo.network,
     } as any);
