@@ -18,10 +18,6 @@ import { Wallet } from '../../Wallet';
 
 // ----------------------------------------------------------------------------------
 
-export interface HiroOptions {
-  network: 'testnet' | 'mainnet';
-}
-
 const id = 'hiro';
 const name = 'Hiro Wallet';
 
@@ -49,15 +45,12 @@ const mockProvider = new MockProvider({
 class HiroConnector extends MockConnector {
   id = id;
   name = name;
-  options: HiroOptions;
   btcData: BtcAddressInfo = def;
 
-  constructor(options: HiroOptions) {
+  constructor() {
     super({
       options: { id, name, walletClient },
     });
-
-    this.options = options;
   }
 
   async connect() {
@@ -80,7 +73,7 @@ class HiroConnector extends MockConnector {
         return;
       }
 
-      this.btcData = Object.assign(this.options, info);
+      this.btcData = info;
     } catch (e: any) {
       throw new Error(e.message);
     }
@@ -97,7 +90,7 @@ class HiroConnector extends MockConnector {
 
 // ----------------------------------------------------------------------------------
 
-export const hiroWallet = (options: HiroOptions): Wallet => {
+export const hiroWallet = (): Wallet => {
   const isHiroInjected =
     typeof window !== 'undefined' &&
     typeof window.StacksProvider !== 'undefined' &&
@@ -106,7 +99,7 @@ export const hiroWallet = (options: HiroOptions): Wallet => {
 
   return {
     createConnector: () => {
-      const connector = new HiroConnector(options);
+      const connector = new HiroConnector();
       return {
         connector,
       };
@@ -115,7 +108,6 @@ export const hiroWallet = (options: HiroOptions): Wallet => {
       browserExtension: 'https://wallet.hiro.so/#download',
       chrome: 'https://wallet.hiro.so/wallet/install-web',
       firefox: 'https://addons.mozilla.org/en-US/firefox/addon/hiro-wallet',
-
       // android: '',
       // ios: '',
       // mobile: '',

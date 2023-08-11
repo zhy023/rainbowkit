@@ -1,4 +1,5 @@
 import '@stacks/connect';
+import btc from '@scure/btc-signer';
 import React, {
   createContext,
   ReactNode,
@@ -27,6 +28,22 @@ interface BtcInfoValue {
   btcInfo: BtcAddressInfo;
   setBtcinfo?: (value: BtcAddressInfo) => void;
 }
+
+interface SignPsbtRequestParams {
+  publicKey: string;
+  hex: string;
+  // allowedSighash?: SignatureHash[];
+  signAtIndex?: number | number[];
+  network?: BtcAddressInfo['network'];
+  account?: number;
+}
+
+const btcTestnet = {
+  bech32: 'tb',
+  pubKeyHash: 0x6f,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
 
 function useBtcInfoState() {
   const [btcInfo, setBtcinfo] = useState(() => getBtcStore());
@@ -109,6 +126,50 @@ export const useAddressCurrent = () => {
 
   // ----------------------------------------------------------------------------------
 
+  // hiroWallet send psdt token
+  async function sendBtcPsdt(
+    address: string,
+    amount: string,
+    publicKey: string
+  ): Promise<string | undefined> {
+    const api = getApi();
+    const tx = new btc.Transaction();
+
+    if (btcInfo.network === 'testnet') {
+      tx.addOutputAddress(address, fmtBit.toSatoshi(amount), btcTestnet);
+
+      // 0 tx
+      tx.addOutputAddress(
+        '2MsWXDub5Jdwy4ZkiPTnUrxaSHvdSoW7BDE',
+        fmtBit.toSatoshi('0'),
+        btcTestnet
+      );
+    } else {
+      tx.addOutputAddress(address, fmtBit.toSatoshi(amount));
+
+      // 0 tx
+      tx.addOutputAddress(
+        '2MsWXDub5Jdwy4ZkiPTnUrxaSHvdSoW7BDE',
+        fmtBit.toSatoshi('0')
+      );
+    }
+
+    const psbt = tx.toPSBT();
+    const hex = psbt.map((n: any) => n.toString(16).padStart(2, '0')).join('');
+
+    const requestParams: SignPsbtRequestParams = {
+      hex,
+      network: btcInfo.network,
+      publicKey,
+    };
+
+    const res = await api?.('signPsbt', requestParams);
+
+    return res?.result?.txid;
+  }
+
+  // ----------------------------------------------------------------------------------
+
   // hiroWallet signMessage
   async function signBtcMessage(message: string): Promise<
     | {
@@ -134,6 +195,7 @@ export const useAddressCurrent = () => {
     btcInfo,
     isBtcWallet,
 
+    sendBtcPsdt,
     sendBtcTransfer,
     setBtcinfo,
     signBtcMessage,
