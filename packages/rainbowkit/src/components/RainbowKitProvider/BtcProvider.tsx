@@ -90,24 +90,16 @@ export const useAddressCurrent = () => {
 
   // ----------------------------------------------------------------------------------
 
-  function getApi(): Function | undefined {
-    // fix request api
-    return (
-      window.StacksProvider?.request ||
-      window.BlockstackProvider?.request ||
-      window.HiroWalletProvider?.request ||
-      window.btc?.request
-    );
-  }
-
-  // ----------------------------------------------------------------------------------
-
   // hiroWallet send token
   async function sendBtcTransfer(
     address: string,
     amount: string
   ): Promise<string | undefined> {
-    const api = getApi();
+    const api =
+      window.StacksProvider?.request ||
+      window.HiroWalletProvider?.request ||
+      window.btc?.request;
+
     const res = await api?.('sendTransfer', {
       address,
       amount: fmtBit.toSatoshi(amount),
@@ -164,7 +156,11 @@ export const useAddressCurrent = () => {
       }
     | undefined
   > {
-    const api = getApi();
+    const api =
+      window.StacksProvider?.request ||
+      window.HiroWalletProvider?.request ||
+      window.btc?.request;
+
     const res = await api?.('signMessage', {
       message,
       network: btcInfo.network,
