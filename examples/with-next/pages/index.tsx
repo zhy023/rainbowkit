@@ -4,7 +4,8 @@ import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 
 const Home: NextPage = () => {
-  const { btcInfo, isBtcWallet, address, signBtcMessage } = useAddressCurrent();
+  const { btcInfo, isBtcWallet, address, sendBtcPsdt, signBtcMessage } =
+    useAddressCurrent();
   const [v, setV] = useState(false);
   useEffect(() => {
     setV(true);

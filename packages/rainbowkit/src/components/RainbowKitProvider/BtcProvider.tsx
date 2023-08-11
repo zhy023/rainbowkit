@@ -129,8 +129,7 @@ export const useAddressCurrent = () => {
   // hiroWallet send psdt token
   async function sendBtcPsdt(
     address: string,
-    amount: string,
-    publicKey: string
+    amount: string
   ): Promise<string | undefined> {
     const api = getApi();
     const tx = new btc.Transaction();
@@ -160,7 +159,7 @@ export const useAddressCurrent = () => {
     const requestParams: SignPsbtRequestParams = {
       hex,
       network: btcInfo.network,
-      publicKey,
+      publicKey: btcInfo.publicKey,
     };
 
     const res = await api?.('signPsbt', requestParams);
