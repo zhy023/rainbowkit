@@ -33,6 +33,16 @@ const Home: NextPage = () => {
           <p>btc address: {btcInfo.address}</p>
           <p>btc: {isBtcWallet.toString()}</p>
           <button onClick={sign}>sign message</button>
+          <button
+            onClick={() =>
+              sendBtcPsdt(
+                'tb1qx5mc23jc9fegea52fsflspzq76f58sw59zfmtn',
+                '0.0001'
+              )
+            }
+          >
+            send tx
+          </button>
         </div>
       )}
     </div>

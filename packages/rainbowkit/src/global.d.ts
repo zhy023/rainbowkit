@@ -9,14 +9,13 @@ declare module '*.png' {
 }
 
 declare module 'satoshi-bitcoin' {
-  function toBitcoin(v: number | string): numner;
-  function toSatoshi(v: number | string): numner;
-  export = { toBitcoin, toSatoshi };
+  export function toBitcoin(v: number | string): numner;
+  export function toSatoshi(v: number | string): numner;
 }
 
 declare module '@scure/btc-signer' {
-  class Transaction {
-    toPSBT(): Uint8Array {}
+  export class Transaction {
+    toPSBT(): Uint8Array;
     addOutputAddress(
       address: string,
       amount: string,
@@ -28,5 +27,4 @@ declare module '@scure/btc-signer' {
       }
     ): number;
   }
-  export = { Transaction };
 }

@@ -1,5 +1,5 @@
 import '@stacks/connect';
-import btc from '@scure/btc-signer';
+import * as btc from '@scure/btc-signer';
 import React, {
   createContext,
   ReactNode,
@@ -9,7 +9,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import fmtBit from 'satoshi-bitcoin';
+import * as fmtBit from 'satoshi-bitcoin';
 import { Connector, useAccount } from 'wagmi';
 import { BtcAddressInfo, def, getBtcStore, setBtcStore } from './btcStore';
 
