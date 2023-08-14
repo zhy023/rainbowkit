@@ -38,21 +38,26 @@ function getTrustWalletInjectedProvider(): Window['ethereum'] {
     return trustWallet;
   };
 
+  // Trust Wallet injected provider is available in the global scope.
+  // There are cases that some cases injected providers can replace window.ethereum
+  // without updating the ethereum.providers array. To prevent issues where
+  // the TW connector does not recognize the provider when TW extension is installed,
+  // we begin our checks by relying on TW's global object.
+
+  // ----------------------------------------------------------------------------------
+
+  // @todo:zhangmao fix
+  if (window.trustwallet) {
+    // @ts-ignore
+    return window.trustwallet?.Provider;
+  }
+
   const injectedProviderExist =
     typeof window !== 'undefined' && typeof window.ethereum !== 'undefined';
 
   // No injected providers exist.
   if (!injectedProviderExist) {
     return;
-  }
-
-  // Trust Wallet injected provider is available in the global scope.
-  // There are cases that some cases injected providers can replace window.ethereum
-  // without updating the ethereum.providers array. To prevent issues where
-  // the TW connector does not recognize the provider when TW extension is installed,
-  // we begin our checks by relying on TW's global object.
-  if (window['trustwallet']) {
-    return window['trustwallet'];
   }
 
   // Trust Wallet was injected into window.ethereum.
