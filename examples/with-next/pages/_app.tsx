@@ -5,10 +5,10 @@ import type { AppProps } from 'next/app';
 import {
   BtcProvider,
   RainbowKitProvider,
-  getDefaultWallets,
   connectorsForWallets,
   RainbowKitAuthenticationProvider,
 } from '@rainbow-me/rainbowkit';
+import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 
 import {
   // argentWallet,
@@ -43,25 +43,30 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 
 const projectId = 'YOUR_PROJECT_ID';
 
-const { wallets } = getDefaultWallets({
-  appName: 'RainbowKit demo',
-  projectId,
-  chains,
-});
-
 const demoAppInfo = {
   appName: 'Rainbowkit Demo',
 };
 
 const connectors = connectorsForWallets([
-  ...wallets,
   {
     groupName: 'Other',
     wallets: [
+      metaMaskWallet({
+        chains,
+        projectId,
+        shimDisconnect: true,
+        walletConnectVersion: '2',
+        walletConnectOptions: {
+          projectId,
+          metadata: {
+            name: 'Trust Wallet',
+            url: '',
+            description: '',
+            icons: ['https://deputy.network/logos/logo-192x192.png'],
+          },
+        },
+      }),
       hiroWallet({ network: 'testnet' }),
-      // argentWallet({ projectId, chains }),
-      // trustWallet({ projectId, chains }),
-      // ledgerWallet({ projectId, chains }),
     ],
   },
 ]);
