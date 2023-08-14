@@ -28,11 +28,11 @@ const mkTrast = {
   name: 'Trust Wallet',
 };
 
-function checkMkTrust(id: string) {
+function checkMkTrust() {
   const currentUrl = window.location.href;
   const url = new URL(currentUrl);
   const params = url.searchParams;
-  return id === 'metaMask' && params.get('only') === 'metaMask';
+  return params.get('only') === 'trust';
 }
 
 // ----------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ function WalletButton({
   } = wallet;
   const getMobileUri = mobile?.getUri;
   const coolModeRef = useCoolMode(iconUrl);
-  const isMkTrust = checkMkTrust(id);
+  const isMkTrust = checkMkTrust();
 
   return (
     <Box
