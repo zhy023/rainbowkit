@@ -63,6 +63,7 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
       setBtcinfo?.({
         address: '',
         derivationPath: '',
+        network: 'mainnet',
         publicKey: '',
         symbol: '',
         type: '',
@@ -86,6 +87,7 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
       setBtcinfo?.({
         address: '',
         derivationPath: '',
+        network: 'mainnet',
         publicKey: '',
         symbol: '',
         type: '',

@@ -8,6 +8,10 @@ import {
 } from '../../../components/RainbowKitProvider/btcStore';
 import { Wallet } from '../../Wallet';
 
+type HiroOptions = {
+  network: BtcAddressInfo['network'];
+};
+
 /**
  * ----------------------------------------------------------------------------------
  * hiroWallet
@@ -47,10 +51,12 @@ class HiroConnector extends MockConnector {
   name = name;
   btcData: BtcAddressInfo = def;
 
-  constructor() {
+  constructor(optios: HiroOptions) {
     super({
       options: { id, name, walletClient },
     });
+
+    this.btcData.network = optios.network;
   }
 
   async connect() {
@@ -73,7 +79,7 @@ class HiroConnector extends MockConnector {
         return;
       }
 
-      this.btcData = info;
+      this.btcData = Object.assign(this.btcData, info);
     } catch (e: any) {
       throw new Error(e.message);
     }
@@ -90,7 +96,7 @@ class HiroConnector extends MockConnector {
 
 // ----------------------------------------------------------------------------------
 
-export const hiroWallet = (): Wallet => {
+export const hiroWallet = (optios: HiroOptions): Wallet => {
   const isHiroInjected =
     typeof window !== 'undefined' &&
     typeof window.StacksProvider !== 'undefined' &&
@@ -99,7 +105,7 @@ export const hiroWallet = (): Wallet => {
 
   return {
     createConnector: () => {
-      const connector = new HiroConnector();
+      const connector = new HiroConnector(optios);
       return {
         connector,
       };

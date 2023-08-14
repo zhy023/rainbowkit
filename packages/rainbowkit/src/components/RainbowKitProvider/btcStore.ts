@@ -4,13 +4,13 @@ export interface BtcAddressInfo {
   publicKey: string;
   symbol: string;
   type: string;
-  network?: string;
+  network: 'testnet' | 'mainnet';
 }
 
 export const def: BtcAddressInfo = {
   address: '',
   derivationPath: '',
-  network: '',
+  network: 'testnet',
   publicKey: '',
   symbol: '',
   type: '',
