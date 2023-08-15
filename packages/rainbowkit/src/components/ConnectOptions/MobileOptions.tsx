@@ -18,25 +18,6 @@ import { setWalletConnectDeepLink } from '../RainbowKitProvider/walletConnectDee
 import { Text } from '../Text/Text';
 import * as styles from './MobileOptions.css';
 
-// ----------------------------------------------------------------------------------
-
-// mock trust wallet
-const mkTrast = {
-  iconUrl: async () =>
-    (await import('../../wallets/walletConnectors/trustWallet/trustWallet.svg'))
-      .default,
-  name: 'Trust Wallet',
-};
-
-function checkMkTrust() {
-  const currentUrl = window.location.href;
-  const url = new URL(currentUrl);
-  const params = url.searchParams;
-  return params.get('only') === 'trust';
-}
-
-// ----------------------------------------------------------------------------------
-
 function WalletButton({
   onClose,
   wallet,
@@ -58,7 +39,6 @@ function WalletButton({
   } = wallet;
   const getMobileUri = mobile?.getUri;
   const coolModeRef = useCoolMode(iconUrl);
-  const isMkTrust = checkMkTrust();
 
   return (
     <Box
@@ -135,7 +115,7 @@ function WalletButton({
             borderRadius="13"
             boxShadow="walletLogo"
             height="60"
-            src={isMkTrust ? mkTrast.iconUrl : iconUrl}
+            src={iconUrl}
             width="60"
           />
         </Box>
@@ -148,7 +128,7 @@ function WalletButton({
           >
             {/* Fix button text clipping in Safari: https://stackoverflow.com/questions/41100273/overflowing-button-text-is-being-clipped-in-safari */}
             <Box as="span" position="relative">
-              {isMkTrust ? mkTrast.name : shortName ?? name}
+              {shortName ?? name}
               {!wallet.ready && ' (unsupported)'}
             </Box>
           </Text>

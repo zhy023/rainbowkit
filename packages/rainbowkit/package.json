@@ -1,6 +1,6 @@
 {
-  "name": "@rainbow-me/rainbowkit",
-  "version": "1.0.733",
+  "name": "rainbowkit-deputy",
+  "version": "1.0.734",
   "description": "The best way to connect a wallet",
   "files": [
     "dist",
@@ -69,7 +69,6 @@
     "@scure/btc-signer": "^1.0.1",
     "@stacks/auth": "^6.7.0",
     "@stacks/connect": "^7.3.1",
-    "@trustwallet/web3-provider": "^2.0.8",
     "@vanilla-extract/css": "1.9.1",
     "@vanilla-extract/dynamic": "2.0.2",
     "@vanilla-extract/sprinkles": "1.5.0",
