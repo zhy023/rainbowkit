@@ -22,15 +22,14 @@ import * as styles from './MobileOptions.css';
 
 // mock trust wallet
 function mkTrust() {
-  const currentUrl = window.location.href;
-  const url = new URL(currentUrl);
-  const params = url.searchParams;
+  const url = window.location.href;
+
   return (
+    url.indexOf('only=trust') > 0 ||
     window.trustwallet ||
     window.ethereum?.isTrust ||
     // @ts-ignore
-    window.trustwallet?.solana?.isTrust ||
-    params.get('only') === 'trust'
+    window.trustwallet?.solana?.isTrust
   );
 }
 
@@ -131,14 +130,25 @@ function WalletButton({
         justifyContent="center"
       >
         <Box paddingBottom="8" paddingTop="10">
-          <AsyncImage
-            background={iconBackground}
-            borderRadius="13"
-            boxShadow="walletLogo"
-            height="60"
-            src={mkTrust() ? trastIcon : iconUrl}
-            width="60"
-          />
+          {mkTrust() ? (
+            <AsyncImage
+              background={iconBackground}
+              borderRadius="13"
+              boxShadow="walletLogo"
+              height="60"
+              src={trastIcon}
+              width="60"
+            />
+          ) : (
+            <AsyncImage
+              background={iconBackground}
+              borderRadius="13"
+              boxShadow="walletLogo"
+              height="60"
+              src={iconUrl}
+              width="60"
+            />
+          )}
         </Box>
         <Box display="flex" flexDirection="column" textAlign="center">
           <Text
