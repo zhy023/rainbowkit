@@ -25,11 +25,11 @@ function mkTrust() {
   const currentUrl = window.location.href;
   const url = new URL(currentUrl);
   const params = url.searchParams;
-  return params.get('only') === 'trust';
+  return window.trustwallet && params.get('only') === 'trust';
 }
 
-const trustName = 'Trust Wallet';
-const trustIiconUrl = async () =>
+const trastName = 'Trust Wallet';
+const trastIcon = async () =>
   (await import('../../wallets/walletConnectors/trustWallet/trustWallet.svg'))
     .default;
 
@@ -56,7 +56,7 @@ function WalletButton({
   } = wallet;
   const getMobileUri = mobile?.getUri;
   const coolModeRef = useCoolMode(iconUrl);
-  const isMock = mkTrust() && id === 'injected';
+  const isMk = mkTrust();
 
   return (
     <Box
@@ -133,7 +133,7 @@ function WalletButton({
             borderRadius="13"
             boxShadow="walletLogo"
             height="60"
-            src={isMock ? trustIiconUrl : iconUrl}
+            src={isMk ? trastIcon : iconUrl}
             width="60"
           />
         </Box>
@@ -146,7 +146,7 @@ function WalletButton({
           >
             {/* Fix button text clipping in Safari: https://stackoverflow.com/questions/41100273/overflowing-button-text-is-being-clipped-in-safari */}
             <Box as="span" position="relative">
-              {isMock ? trustName : shortName ?? name}
+              {isMk ? trastName : shortName ?? name}
               {!wallet.ready && ' (unsupported)'}
             </Box>
           </Text>
