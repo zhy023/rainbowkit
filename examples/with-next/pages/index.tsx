@@ -4,11 +4,11 @@ import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 
 const Home: NextPage = () => {
-  const { btcInfo, isBtcWallet, address, sendBtcPsdt, signBtcMessage } =
-    useAddressCurrent();
+  const { btcInfo, isBtcWallet, address, signBtcMessage } = useAddressCurrent();
   const [v, setV] = useState(false);
   useEffect(() => {
     setV(true);
+    console.log(window.trustwallet);
   }, []);
 
   async function sign() {
@@ -33,16 +33,7 @@ const Home: NextPage = () => {
           <p>btc address: {btcInfo.address}</p>
           <p>btc: {isBtcWallet.toString()}</p>
           <button onClick={sign}>sign message</button>
-          <button
-            onClick={() =>
-              sendBtcPsdt(
-                'tb1qx5mc23jc9fegea52fsflspzq76f58sw59zfmtn',
-                '0.0001'
-              )
-            }
-          >
-            send tx
-          </button>
+          <button>send tx</button>
         </div>
       )}
     </div>

@@ -38,6 +38,14 @@ function getTrustWalletInjectedProvider(): Window['ethereum'] {
     return trustWallet;
   };
 
+  const injectedProviderExist =
+    typeof window !== 'undefined' && typeof window.ethereum !== 'undefined';
+
+  // No injected providers exist.
+  if (!injectedProviderExist) {
+    return;
+  }
+
   // Trust Wallet injected provider is available in the global scope.
   // There are cases that some cases injected providers can replace window.ethereum
   // without updating the ethereum.providers array. To prevent issues where
@@ -50,14 +58,6 @@ function getTrustWalletInjectedProvider(): Window['ethereum'] {
   if (window.trustwallet) {
     // @ts-ignore
     return window.trustwallet?.Provider;
-  }
-
-  const injectedProviderExist =
-    typeof window !== 'undefined' && typeof window.ethereum !== 'undefined';
-
-  // No injected providers exist.
-  if (!injectedProviderExist) {
-    return;
   }
 
   // Trust Wallet was injected into window.ethereum.

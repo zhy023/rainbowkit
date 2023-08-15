@@ -12,7 +12,7 @@ import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 
 import {
   // argentWallet,
-  // trustWallet,
+  trustWallet,
   // ledgerWallet,
   hiroWallet,
 } from '@rainbow-me/rainbowkit/wallets';
@@ -41,7 +41,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   [publicProvider()]
 );
 
-const projectId = 'YOUR_PROJECT_ID';
+const projectId = 'cc7e352f0f7e60a5e695cfb3e65f7072';
 
 const demoAppInfo = {
   appName: 'Rainbowkit Demo',
@@ -66,6 +66,7 @@ const connectors = connectorsForWallets([
           },
         },
       }),
+      trustWallet({ chains, projectId, shimDisconnect: true }),
       hiroWallet({ network: 'testnet' }),
     ],
   },
