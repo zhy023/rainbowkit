@@ -60,7 +60,6 @@ function WalletButton({
   } = wallet;
   const getMobileUri = mobile?.getUri;
   const coolModeRef = useCoolMode(iconUrl);
-  const isMk = mkTrust();
 
   return (
     <Box
@@ -137,7 +136,7 @@ function WalletButton({
             borderRadius="13"
             boxShadow="walletLogo"
             height="60"
-            src={isMk ? trastIcon : iconUrl}
+            src={mkTrust() ? trastIcon : iconUrl}
             width="60"
           />
         </Box>
@@ -150,7 +149,7 @@ function WalletButton({
           >
             {/* Fix button text clipping in Safari: https://stackoverflow.com/questions/41100273/overflowing-button-text-is-being-clipped-in-safari */}
             <Box as="span" position="relative">
-              {isMk ? trastName : shortName ?? name}
+              {mkTrust() ? trastName : shortName ?? name}
               {!wallet.ready && ' (unsupported)'}
             </Box>
           </Text>
