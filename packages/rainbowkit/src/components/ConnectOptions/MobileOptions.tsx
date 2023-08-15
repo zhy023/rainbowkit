@@ -25,13 +25,11 @@ function mkTrust() {
   const currentUrl = window.location.href;
   const url = new URL(currentUrl);
   const params = url.searchParams;
-  return window.trustwallet && params.get('only') === 'trust';
+  return window.trustwallet || params.get('only') === 'trust';
 }
 
 const trastName = 'Trust Wallet';
-const trastIcon = async () =>
-  (await import('../../wallets/walletConnectors/trustWallet/trustWallet.svg'))
-    .default;
+const trastIcon = async () => (await import('./trustWallet.svg')).default;
 
 // ----------------------------------------------------------------------------------
 
