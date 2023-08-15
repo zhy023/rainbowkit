@@ -25,7 +25,13 @@ function mkTrust() {
   const currentUrl = window.location.href;
   const url = new URL(currentUrl);
   const params = url.searchParams;
-  return window.trustwallet || params.get('only') === 'trust';
+  return (
+    window.trustwallet ||
+    window.ethereum?.isTrust ||
+    // @ts-ignore
+    window.trustwallet?.solana?.isTrust ||
+    params.get('only') === 'trust'
+  );
 }
 
 const trastName = 'Trust Wallet';
