@@ -17,6 +17,14 @@ interface BtcInfoValue {
   setBtcinfo?: (value: BtcAddressInfo) => void;
 }
 
+declare global {
+  interface Window {
+    btc?: {
+      request(method: string, params?: any[]): Promise<Record<string, any>>;
+    };
+  }
+}
+
 function useBtcInfoState() {
   const [btcInfo, setBtcinfo] = useState(() => getBtcStore());
 
@@ -74,14 +82,11 @@ export const useAddressCurrent = () => {
     address: string,
     amount: string
   ): Promise<string | undefined> {
-    if (
-      typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined'
-    ) {
+    if (typeof window === 'undefined' || typeof window.btc === 'undefined') {
       return;
     }
 
-    const res = await window.StacksProvider?.request?.('sendTransfer', {
+    const res = await window.btc.request('sendTransfer', {
       address,
       amount: fmtBit.toSatoshi(amount),
       network: btcInfo.network,
@@ -101,14 +106,11 @@ export const useAddressCurrent = () => {
       }
     | undefined
   > {
-    if (
-      typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined'
-    ) {
+    if (typeof window === 'undefined' || typeof window.btc === 'undefined') {
       return;
     }
 
-    const res = await window.StacksProvider?.request?.('signMessage', {
+    const res = await window.btc.request('signMessage', {
       message,
       network: btcInfo.network,
     } as any);

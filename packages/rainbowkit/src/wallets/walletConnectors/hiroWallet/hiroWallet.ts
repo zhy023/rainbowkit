@@ -12,6 +12,14 @@ type HiroOptions = {
   network: BtcAddressInfo['network'];
 };
 
+declare global {
+  interface Window {
+    btc?: {
+      request(method: string, params?: any[]): Promise<Record<string, any>>;
+    };
+  }
+}
+
 /**
  * ----------------------------------------------------------------------------------
  * hiroWallet
@@ -60,14 +68,11 @@ class HiroConnector extends MockConnector {
   }
 
   async connect() {
-    if (
-      typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined'
-    ) {
+    if (typeof window === 'undefined' || typeof window.btc === 'undefined') {
       return;
     }
 
-    const res = await window.StacksProvider.request('getAddresses');
+    const res = await window.btc.request('getAddresses');
     const address = res?.result.addresses ?? [];
     const info = address.find(
       (addr: { type: string }) => addr.type === 'p2wpkh'

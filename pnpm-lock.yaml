@@ -171,8 +171,8 @@ importers:
   examples/with-next:
     dependencies:
       '@rainbow-me/rainbowkit':
-        specifier: 1.0.8
-        version: 1.0.8(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(viem@1.3.0)(wagmi@1.3.9)
+        specifier: workspace:*
+        version: link:../../packages/rainbowkit
       '@stacks/auth':
         specifier: ^6.7.0
         version: 6.7.0
@@ -6591,29 +6591,6 @@ packages:
     resolution: {integrity: sha512-d0O68AYy/9oeEy1DdC07bz1/ZXX+DqCskRd3i4JzLSTXwefzaepQrKjXC7aNM8lTHjFLDO0pDgaEiQ7jEk+HVg==}
     dependencies:
       '@babel/runtime': 7.21.5
-    dev: false
-
-  /@rainbow-me/rainbowkit@1.0.8(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(viem@1.3.0)(wagmi@1.3.9):
-    resolution: {integrity: sha512-m1B9/X3p8MLmj4fDfs2NpJlFRmKz7vOR0jmcdBw2SMFzXqP1FQFQc4pjvtLEeyfEUGSNNceGrecFZRVS0Qk//A==}
-    engines: {node: '>=12.4'}
-    peerDependencies:
-      react: '>=17'
-      react-dom: '>=17'
-      viem: ~0.3.19 || ^1.0.0
-      wagmi: ~1.0.1 || ~1.1.0 || ~1.2.0 || ~1.3.0
-    dependencies:
-      '@vanilla-extract/css': 1.9.1
-      '@vanilla-extract/dynamic': 2.0.2
-      '@vanilla-extract/sprinkles': 1.5.0(@vanilla-extract/css@1.9.1)
-      clsx: 1.1.1
-      qrcode: 1.5.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-remove-scroll: 2.5.4(@types/react@18.2.14)(react@18.2.0)
-      viem: 1.3.0(typescript@5.0.4)
-      wagmi: 1.3.9(lokijs@1.5.12)(react-dom@18.2.0)(react@18.2.0)(typescript@5.0.4)(viem@1.3.0)
-    transitivePeerDependencies:
-      - '@types/react'
     dev: false
 
   /@react-spring/animated@9.4.5(react@18.2.0):
