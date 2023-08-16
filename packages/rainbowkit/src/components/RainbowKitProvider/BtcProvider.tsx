@@ -80,31 +80,22 @@ export const useAddressCurrent = () => {
 
   // ----------------------------------------------------------------------------------
 
-  async function checkRequst() {
-    try {
-      await window.StacksProvider?.request?.('getAddresses');
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  // ----------------------------------------------------------------------------------
-
   // hiroWallet send token
   async function sendBtcTransfer(
     address: string,
     amount: string
   ): Promise<string | undefined> {
-    const checked = await checkRequst();
+    if (
+      typeof window === 'undefined' ||
+      typeof window.StacksProvider === 'undefined' ||
+      typeof window.btc === 'undefined'
+    ) {
+      return;
+    }
 
     try {
-      let api = window.StacksProvider?.request;
-      if (!checked) {
-        api = window.btc?.request;
-      }
-
-      const res = await api?.('sendTransfer', {
+      // const res = await window.StacksProvider?.request
+      const res = await window.btc?.request?.('sendTransfer', {
         address,
         amount: fmtBit.toSatoshi(amount),
         network: btcInfo.network,
@@ -128,9 +119,16 @@ export const useAddressCurrent = () => {
       }
     | undefined
   > {
-    const api = window.StacksProvider?.request || window.btc?.request;
+    if (
+      typeof window === 'undefined' ||
+      typeof window.StacksProvider === 'undefined' ||
+      typeof window.btc === 'undefined'
+    ) {
+      return;
+    }
 
-    const res = await api?.('signMessage', {
+    // const res = await window.StacksProvider?.request;
+    const res = await window.btc?.request?.('signMessage', {
       message,
       network: btcInfo.network,
     } as any);
