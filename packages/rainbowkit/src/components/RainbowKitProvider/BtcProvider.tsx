@@ -12,17 +12,6 @@ import * as fmtBit from 'satoshi-bitcoin';
 import { Connector, useAccount } from 'wagmi';
 import { BtcAddressInfo, def, getBtcStore, setBtcStore } from './btcStore';
 
-declare global {
-  interface Window {
-    HiroWalletProvider?: {
-      request(method: string, params?: any[]): Promise<Record<string, any>>;
-    };
-    btc?: {
-      request(method: string, params?: any[]): Promise<Record<string, any>>;
-    };
-  }
-}
-
 interface BtcInfoValue {
   btcInfo: BtcAddressInfo;
   setBtcinfo?: (value: BtcAddressInfo) => void;
@@ -87,25 +76,18 @@ export const useAddressCurrent = () => {
   ): Promise<string | undefined> {
     if (
       typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined' ||
-      typeof window.btc === 'undefined'
+      typeof window.StacksProvider === 'undefined'
     ) {
       return;
     }
 
-    try {
-      // const res = await window.StacksProvider?.request
-      const res = await window.btc?.request?.('sendTransfer', {
-        address,
-        amount: fmtBit.toSatoshi(amount),
-        network: btcInfo.network,
-      } as any);
+    const res = await window.StacksProvider?.request?.('sendTransfer', {
+      address,
+      amount: fmtBit.toSatoshi(amount),
+      network: btcInfo.network,
+    } as any);
 
-      return res?.result?.txid;
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-    }
+    return res?.result?.txid;
   }
 
   // ----------------------------------------------------------------------------------
@@ -121,14 +103,12 @@ export const useAddressCurrent = () => {
   > {
     if (
       typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined' ||
-      typeof window.btc === 'undefined'
+      typeof window.StacksProvider === 'undefined'
     ) {
       return;
     }
 
-    // const res = await window.StacksProvider?.request;
-    const res = await window.btc?.request?.('signMessage', {
+    const res = await window.StacksProvider?.request?.('signMessage', {
       message,
       network: btcInfo.network,
     } as any);

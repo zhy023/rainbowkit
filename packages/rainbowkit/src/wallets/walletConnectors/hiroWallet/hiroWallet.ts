@@ -62,14 +62,12 @@ class HiroConnector extends MockConnector {
   async connect() {
     if (
       typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined' ||
-      typeof window.btc === 'undefined'
+      typeof window.StacksProvider === 'undefined'
     ) {
       return;
     }
 
-    // const res = await window.StacksProvider?.request
-    const res = await window.btc.request('getAddresses');
+    const res = await window.StacksProvider.request('getAddresses');
     const address = res?.result.addresses ?? [];
     const info = address.find(
       (addr: { type: string }) => addr.type === 'p2wpkh'
