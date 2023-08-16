@@ -121,7 +121,7 @@ export const useAddressCurrent = () => {
   // ----------------------------------------------------------------------------------
 
   return {
-    address: isBtcWallet ? btcInfo.address : address,
+    address: isBtcWallet ? btcInfo.address : (address as string),
     btcInfo,
     isBtcWallet,
 

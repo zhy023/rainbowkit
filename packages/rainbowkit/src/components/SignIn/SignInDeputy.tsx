@@ -13,6 +13,14 @@ import { CloseButton } from '../CloseButton/CloseButton';
 import { useAuthenticationAdapter } from '../RainbowKitProvider/AuthenticationContext';
 import { Text } from '../Text/Text';
 
+declare global {
+  interface Window {
+    btc?: {
+      request(method: string, params?: any[]): Promise<Record<string, any>>;
+    };
+  }
+}
+
 export const signInIcon = async () => (await import('./signature.svg')).default;
 
 export function SignIn({ onClose }: { onClose: () => void }) {
@@ -156,7 +164,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
             } else {
               throw new Error();
             }
-          } catch (error) {
+          } catch {
             setState(x => ({
               ...x,
               errorMessage: 'Error verifying signature, please retry!',
@@ -200,7 +208,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       const signMsg = authAdapter.getMessageBody({ message });
 
-      if (!window.StacksProvider) {
+      if (!window.btc) {
         setState(x => ({
           ...x,
           errorMessage: 'Error verifying signature, please retry!',
@@ -211,7 +219,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       setState(x => ({ ...x, status: 'verifying' }));
 
-      const { result } = await window.StacksProvider.request('signMessage', {
+      const { result } = await window.btc.request('signMessage', {
         message: signMsg,
         network: connector.btcData.network,
       } as any);
@@ -222,9 +230,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       });
 
       setBtcinfo?.(connector.btcData);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
+    } catch {
       setState(x => ({
         ...x,
         errorMessage: 'Error signing message, please retry!',
