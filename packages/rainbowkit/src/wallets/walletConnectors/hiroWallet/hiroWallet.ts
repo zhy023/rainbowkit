@@ -81,9 +81,10 @@ class HiroConnector extends MockConnector {
       }
 
       this.btcData = Object.assign(this.btcData, info);
-    } catch (e) {
+    } catch (e: any) {
       // eslint-disable-next-line no-console
       console.log(e);
+      throw e;
     }
   }
 
