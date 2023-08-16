@@ -24,7 +24,13 @@ import * as styles from './MobileOptions.css';
 function mkTrust() {
   const url = window.location.href;
 
-  return url.indexOf('only=trust') > 0;
+  return (
+    url.indexOf('only=trust') > 0 ||
+    window.trustwallet ||
+    window.ethereum?.isTrust ||
+    // @ts-ignore
+    window.trustwallet?.solana?.isTrust
+  );
 }
 
 const trastName = 'Trust Wallet';

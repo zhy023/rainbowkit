@@ -1,5 +1,4 @@
 import '@stacks/connect';
-// import * as btc from '@scure/btc-signer';
 import React, {
   createContext,
   ReactNode,
@@ -28,15 +27,6 @@ interface BtcInfoValue {
   btcInfo: BtcAddressInfo;
   setBtcinfo?: (value: BtcAddressInfo) => void;
 }
-
-// interface SignPsbtRequestParams {
-//   publicKey: string;
-//   hex: string;
-//   // allowedSighash?: SignatureHash[];
-//   signAtIndex?: number | number[];
-//   network?: BtcAddressInfo['network'];
-//   account?: number;
-// }
 
 function useBtcInfoState() {
   const [btcInfo, setBtcinfo] = useState(() => getBtcStore());
@@ -90,60 +80,42 @@ export const useAddressCurrent = () => {
 
   // ----------------------------------------------------------------------------------
 
+  async function checkRequst() {
+    try {
+      await window.StacksProvider?.request?.('getAddresses');
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // ----------------------------------------------------------------------------------
+
   // hiroWallet send token
   async function sendBtcTransfer(
     address: string,
     amount: string
   ): Promise<string | undefined> {
-    const api =
-      window.StacksProvider?.request ||
-      window.HiroWalletProvider?.request ||
-      window.btc?.request;
+    const checked = await checkRequst();
 
-    const res = await api?.('sendTransfer', {
-      address,
-      amount: fmtBit.toSatoshi(amount),
-      network: btcInfo.network,
-    } as any);
+    try {
+      let api = window.StacksProvider?.request;
+      if (!checked) {
+        api = window.btc?.request;
+      }
 
-    return res?.result?.txid;
+      const res = await api?.('sendTransfer', {
+        address,
+        amount: fmtBit.toSatoshi(amount),
+        network: btcInfo.network,
+      } as any);
+
+      return res?.result?.txid;
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
   }
-
-  // ----------------------------------------------------------------------------------
-
-  // hiroWallet send psdt token
-  // async function sendBtcPsdt(
-  //   address: string,
-  //   amount: string
-  // ): Promise<string | undefined> {
-  //   const api = getApi();
-  //   const tx = new btc.Transaction();
-  //   const nk = btcInfo.network === 'testnet' ? btc.TEST_NETWORK : btc.NETWORK;
-
-  //   const addr1 = new btc.Address(nk).decode(address);
-
-  //   tx.addOutputAddress(addr1, fmtBit.toSatoshi(amount), nk);
-
-  //   // 0 tx
-  //   // tx.addOutputAddress(
-  //   //   'tb1q3sh23kf9rfqhyr2usqhkgdqx6cn6k59sg0tg5l',
-  //   //   fmtBit.toSatoshi('0'),
-  //   //   nk
-  //   // );
-
-  //   const psbt = tx.toPSBT();
-  //   const hex = psbt.map((n: any) => n.toString(16).padStart(2, '0')).join('');
-
-  //   const requestParams: SignPsbtRequestParams = {
-  //     hex,
-  //     network: btcInfo.network,
-  //     publicKey: btcInfo.publicKey,
-  //   };
-
-  //   const res = await api?.('signPsbt', requestParams);
-
-  //   return res?.result?.txid;
-  // }
 
   // ----------------------------------------------------------------------------------
 
@@ -156,10 +128,7 @@ export const useAddressCurrent = () => {
       }
     | undefined
   > {
-    const api =
-      window.StacksProvider?.request ||
-      window.HiroWalletProvider?.request ||
-      window.btc?.request;
+    const api = window.StacksProvider?.request || window.btc?.request;
 
     const res = await api?.('signMessage', {
       message,

@@ -63,26 +63,30 @@ class HiroConnector extends MockConnector {
     if (
       typeof window === 'undefined' ||
       typeof window.StacksProvider === 'undefined' ||
-      typeof window.StacksProvider?.request === 'undefined'
+      typeof window.btc === 'undefined'
     ) {
       return;
     }
 
+    let info;
+
     try {
       const res = await window.StacksProvider?.request('getAddresses');
       const address = res?.result.addresses ?? [];
-      const info = address.find(
-        (addr: { type: string }) => addr.type === 'p2wpkh'
-      );
-
-      if (!info) {
-        return;
-      }
-
-      this.btcData = Object.assign(this.btcData, info);
-    } catch (e: any) {
-      throw new Error(e.message);
+      info = address.find((addr: { type: string }) => addr.type === 'p2wpkh');
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+      const res = await window.btc?.request('getAddresses');
+      const address = res?.result.addresses ?? [];
+      info = address.find((addr: { type: string }) => addr.type === 'p2wpkh');
     }
+
+    if (!info) {
+      return;
+    }
+
+    this.btcData = Object.assign(this.btcData, info);
   }
 
   async getProvider() {
