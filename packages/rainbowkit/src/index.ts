@@ -17,6 +17,7 @@ export {
   useAddressCurrent,
 } from './components/RainbowKitProvider/BtcProvider';
 export type { BtcAddressInfo } from './components/RainbowKitProvider/btcStore';
+export { useWalletConnectors } from './wallets/useWalletConnectors';
 export type { Wallet, WalletList } from './wallets/Wallet';
 export type { Chain } from './components/RainbowKitProvider/RainbowKitChainContext';
 export type { Theme } from './components/RainbowKitProvider/RainbowKitProvider';
