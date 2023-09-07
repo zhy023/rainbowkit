@@ -13,14 +13,6 @@ import { CloseButton } from '../CloseButton/CloseButton';
 import { useAuthenticationAdapter } from '../RainbowKitProvider/AuthenticationContext';
 import { Text } from '../Text/Text';
 
-// declare global {
-//   interface Window {
-//     btc?: {
-//       request(method: string, params?: any[]): Promise<Record<string, any>>;
-//     };
-//   }
-// }
-
 export const signInIcon = async () => (await import('./signature.svg')).default;
 
 export function SignIn({ onClose }: { onClose: () => void }) {
