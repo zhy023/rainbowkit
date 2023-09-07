@@ -12,14 +12,6 @@ type HiroOptions = {
   network: BtcAddressInfo['network'];
 };
 
-// declare global {
-//   interface Window {
-//     btc?: {
-//       request(method: string, params?: any[]): Promise<Record<string, any>>;
-//     };
-//   }
-// }
-
 /**
  * ----------------------------------------------------------------------------------
  * hiroWallet

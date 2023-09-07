@@ -1,98 +1,102 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import type { InjectedConnectorOptions } from '@wagmi/core/dist/connectors/injected';
+import { InjectedConnector } from 'wagmi/connectors/injected';
 import { Chain } from '../../../components/RainbowKitProvider/RainbowKitChainContext';
 import { getWalletConnectUri } from '../../../utils/getWalletConnectUri';
-import { isAndroid, isIOS } from '../../../utils/isMobile';
+import { isAndroid } from '../../../utils/isMobile';
 import { Wallet } from '../../Wallet';
 import {
-  getInjectedConnector,
-  hasInjectedProvider,
-} from '../../getInjectedConnector';
-import { getWalletConnectConnector } from '../../getWalletConnectConnector';
-import type {
+  getWalletConnectConnector,
   WalletConnectConnectorOptions,
   WalletConnectLegacyConnectorOptions,
 } from '../../getWalletConnectConnector';
+import { InjectedWalletOptions } from '../injectedWallet/injectedWallet';
 
-export interface RainbowWalletLegacyOptions {
+export interface BifrostWalletLegacyOptions {
   projectId?: string;
   chains: Chain[];
   walletConnectVersion: '1';
   walletConnectOptions?: WalletConnectLegacyConnectorOptions;
 }
 
-export interface RainbowWalletOptions {
+export interface BifrostWalletOptions {
   projectId: string;
   chains: Chain[];
   walletConnectVersion?: '2';
   walletConnectOptions?: WalletConnectConnectorOptions;
 }
 
-export const rainbowWallet = ({
+export const bifrostWallet = ({
   chains,
   projectId,
   walletConnectOptions,
   walletConnectVersion = '2',
   ...options
-}: (RainbowWalletLegacyOptions | RainbowWalletOptions) &
+}: (BifrostWalletOptions | BifrostWalletLegacyOptions) &
+  InjectedWalletOptions &
   InjectedConnectorOptions): Wallet => {
-  const isRainbowInjected = hasInjectedProvider('isRainbow');
-  const shouldUseWalletConnect = !isRainbowInjected;
+  const isBifrostInjected =
+    typeof window !== 'undefined' &&
+    typeof window.ethereum !== 'undefined' &&
+    window.ethereum.isBifrost;
+
+  const shouldUseWalletConnect = !isBifrostInjected;
+
   return {
-    id: 'rainbow',
-    name: 'Rainbow',
-    iconUrl: async () => (await import('./rainbowWallet.svg')).default,
-    iconBackground: '#0c2f78',
-    installed: !shouldUseWalletConnect ? isRainbowInjected : undefined,
+    id: 'bifrostWallet',
+    name: 'Bifrost Wallet',
+    iconUrl: async () => (await import('./bifrostWallet.svg')).default,
+    iconBackground: '#fff',
+    installed: !shouldUseWalletConnect ? isBifrostInjected : undefined,
     downloadUrls: {
       android:
-        'https://play.google.com/store/apps/details?id=me.rainbow&referrer=utm_source%3Drainbowkit&utm_source=rainbowkit',
-      ios: 'https://apps.apple.com/app/apple-store/id1457119021?pt=119997837&ct=rainbowkit&mt=8',
-      mobile: 'https://rainbow.download?utm_source=rainbowkit',
-      qrCode:
-        'https://rainbow.download?utm_source=rainbowkit&utm_medium=qrcode',
-      browserExtension: 'https://rainbow.me/extension?utm_source=rainbowkit',
+        'https://play.google.com/store/apps/details?id=com.bifrostwallet.app',
+      ios: 'https://apps.apple.com/us/app/bifrost-wallet/id1577198351',
+      qrCode: 'https://bifrostwallet.com/#download-app',
     },
     createConnector: () => {
       const connector = shouldUseWalletConnect
         ? getWalletConnectConnector({
-            projectId,
             chains,
-            version: walletConnectVersion,
+            projectId,
             options: walletConnectOptions,
+            version: walletConnectVersion,
           })
-        : getInjectedConnector({ flag: 'isRainbow', chains, options });
+        : new InjectedConnector({
+            chains,
+            options,
+          });
 
       const getUri = async () => {
         const uri = await getWalletConnectUri(connector, walletConnectVersion);
+
         return isAndroid()
           ? uri
-          : isIOS()
-          ? `rainbow://wc?uri=${encodeURIComponent(uri)}&connector=rainbowkit`
-          : `https://rnbwapp.com/wc?uri=${encodeURIComponent(
-              uri
-            )}&connector=rainbowkit`;
+          : `https://app.bifrostwallet.com/wc?uri=${encodeURIComponent(uri)}`;
       };
 
       return {
         connector,
-        mobile: { getUri: shouldUseWalletConnect ? getUri : undefined },
+        mobile: {
+          getUri: shouldUseWalletConnect ? getUri : undefined,
+        },
         qrCode: shouldUseWalletConnect
           ? {
-              getUri,
+              getUri: async () =>
+                getWalletConnectUri(connector, walletConnectVersion),
               instructions: {
                 learnMoreUrl:
-                  'https://learn.rainbow.me/connect-to-a-website-or-app?utm_source=rainbowkit&utm_medium=connector&utm_campaign=learnmore',
+                  'https://support.bifrostwallet.com/en/articles/6886814-how-to-use-walletconnect',
                 steps: [
                   {
                     description:
-                      'We recommend putting Rainbow on your home screen for faster access to your wallet.',
+                      'We recommend putting Bifrost Wallet on your home screen for quicker access.',
                     step: 'install',
-                    title: 'Open the Rainbow app',
+                    title: 'Open the Bifrost Wallet app',
                   },
                   {
                     description:
-                      'You can easily backup your wallet using our backup feature on your phone.',
+                      'Create or import a wallet using your recovery phrase.',
                     step: 'create',
                     title: 'Create or Import a Wallet',
                   },
