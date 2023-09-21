@@ -184,7 +184,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   // ----------------------------------------------------------------------------------
 
-  const signHiro = async () => {
+  const signLeather = async () => {
     try {
       setState(x => ({
         ...x,
@@ -291,9 +291,9 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       await signXverse();
     }
 
-    // hiro
-    if (connector.id === 'hiro') {
-      await signHiro();
+    // leather
+    if (connector.id === 'leather') {
+      await signLeather();
     }
 
     // unisat

@@ -1,7 +1,7 @@
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
 import { ethers } from 'ethers';
 import {
-  AddressPurposes,
+  AddressPurpose,
   BitcoinNetwork,
   Address as BtcAddress,
   getAddress,
@@ -76,7 +76,7 @@ class XverseConnector extends MockConnector {
         payload: {
           message: 'Connect Xverse wallet',
           network: this.btcNetwork,
-          purposes: [AddressPurposes.ORDINALS, AddressPurposes.PAYMENT],
+          purposes: [AddressPurpose.Ordinals, AddressPurpose.Payment],
         },
       });
 

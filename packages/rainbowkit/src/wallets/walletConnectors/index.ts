@@ -11,9 +11,9 @@ import { enkryptWallet } from './enkryptWallet/enkryptWallet';
 import { foxWallet } from './foxWallet/foxWallet';
 import { frameWallet } from './frameWallet/frameWallet';
 import { frontierWallet } from './frontierWallet/frontierWallet';
-import { hiroWallet } from './hiroWallet/hiroWallet';
 import { imTokenWallet } from './imTokenWallet/imTokenWallet';
 import { injectedWallet } from './injectedWallet/injectedWallet';
+import { leatherWallet } from './leatherWallet/leatherWallet';
 import { ledgerWallet } from './ledgerWallet/ledgerWallet';
 import { metaMaskWallet } from './metaMaskWallet/metaMaskWallet';
 import { mewWallet } from './mewWallet/mewWallet';
@@ -50,6 +50,7 @@ export {
   frontierWallet,
   imTokenWallet,
   injectedWallet,
+  leatherWallet,
   ledgerWallet,
   metaMaskWallet,
   mewWallet,
@@ -69,5 +70,4 @@ export {
   walletConnectWallet,
   xdefiWallet,
   zerionWallet,
-  hiroWallet,
 };
