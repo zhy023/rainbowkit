@@ -44,8 +44,12 @@ const BtcInfoContext = createContext<BtcInfoValue>({
 
 // ----------------------------------------------------------------------------------
 
-function isBitWallet(conn?: Connector) {
-  return ['hiro', 'xverse', 'unisat'].includes(conn?.id);
+export function isBitWallet(conn?: Connector) {
+  if (!conn) {
+    return false;
+  }
+
+  return ['leather', 'xverse', 'unisat'].includes(conn.id);
 }
 
 // ----------------------------------------------------------------------------------
@@ -77,7 +81,7 @@ export const useAddressCurrent = () => {
 
   // ----------------------------------------------------------------------------------
 
-  // hiroWallet send token
+  // leatherWallet send token
   async function sendBtcTransfer(
     address: string,
     amount: string
@@ -100,7 +104,7 @@ export const useAddressCurrent = () => {
 
   // ----------------------------------------------------------------------------------
 
-  // hiroWallet signMessage
+  // leatherWallet signMessage
   async function signBtcMessage(message: string): Promise<
     | {
         address: string;
