@@ -44,13 +44,13 @@ const BtcInfoContext = createContext<BtcInfoValue>({
 
 // ----------------------------------------------------------------------------------
 
-export function isBitWallet(conn?: Connector) {
+export const checkBitWallet = (conn?: Connector) => {
   if (!conn) {
     return false;
   }
 
   return ['leather', 'xverse', 'unisat'].includes(conn.id);
-}
+};
 
 // ----------------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ export function BtcProvider(props: { children: ReactNode }) {
 export const useAddressCurrent = () => {
   const { address, connector } = useAccount();
   const { btcInfo, setBtcinfo } = useContext(BtcInfoContext);
-  const isBtcWallet = isBitWallet(connector);
+  const isBtcWallet = checkBitWallet(connector);
 
   // ----------------------------------------------------------------------------------
 
