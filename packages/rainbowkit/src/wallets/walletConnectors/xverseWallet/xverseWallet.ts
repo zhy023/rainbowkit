@@ -1,13 +1,13 @@
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
 import { ethers } from 'ethers';
 import {
+  Address as BtcAddress,
   AddressPurpose,
   BitcoinNetwork,
-  Address as BtcAddress,
-  getAddress,
   GetAddressResponse,
+  getAddress,
 } from 'sats-connect';
-import { createWalletClient, http } from 'viem';
+import { http, createWalletClient } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { Wallet } from '../../Wallet';
 
@@ -68,7 +68,7 @@ class XverseConnector extends MockConnector {
       await getAddress({
         onCancel: () => {},
         onFinish: (res: GetAddressResponse) => {
-          const v = res.addresses.find(item => item.purpose === 'payment');
+          const v = res.addresses.find((item) => item.purpose === 'payment');
 
           // save btc address
           this.btcNetwork.address = (v as BtcAddress)?.address;
@@ -84,7 +84,7 @@ class XverseConnector extends MockConnector {
         account: walletClient.account,
         chain: { id: 1, unsupported: false },
       };
-    } catch (e: any) {
+    } catch {
       return {
         account: '',
         chain: { id: 1, unsupported: true },

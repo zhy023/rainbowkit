@@ -27,15 +27,15 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   const getNonce = useCallback(async () => {
     try {
       const nonce = await authAdapter.getNonce();
-      setState(x => ({ ...x, nonce }));
-    } catch (error) {
-      setState(x => ({
+      setState((x) => ({ ...x, nonce }));
+    } catch (_err: any) {
+      setState((x) => ({
         ...x,
         errorMessage: 'Error preparing message, please retry!',
         status: 'idle',
       }));
     }
-  }, [authAdapter]);
+  }, [authAdapter, setState]);
 
   // Pre-fetch nonce when screen is rendered
   // to ensure deep linking works for WalletConnect
@@ -67,7 +67,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         return;
       }
 
-      setState(x => ({
+      setState((x) => ({
         ...x,
         errorMessage: undefined,
         status: 'signing',
@@ -83,20 +83,20 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       } catch (error) {
         if (error instanceof UserRejectedRequestError) {
           // It's not really an "error" so we silently ignore and reset to idle state
-          return setState(x => ({
+          return setState((x) => ({
             ...x,
             status: 'idle',
           }));
         }
 
-        return setState(x => ({
+        return setState((x) => ({
           ...x,
           errorMessage: 'Error signing message, please retry!',
           status: 'idle',
         }));
       }
 
-      setState(x => ({ ...x, status: 'verifying' }));
+      setState((x) => ({ ...x, status: 'verifying' }));
 
       try {
         const verified = await authAdapter.verify({ message, signature });
@@ -107,7 +107,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           throw new Error();
         }
       } catch {
-        return setState(x => ({
+        return setState((x) => ({
           ...x,
           errorMessage: 'Error verifying signature, please retry!',
           status: 'idle',
@@ -125,7 +125,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   const signXverse = async () => {
     try {
-      setState(x => ({
+      setState((x) => ({
         ...x,
         errorMessage: undefined,
         status: 'signing',
@@ -139,7 +139,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       const signMsg = message.getMessageBody({ message: '' });
       const signMessageOptions = {
         onCancel: () => {
-          setState(x => ({
+          setState((x) => ({
             ...x,
             status: 'idle',
           }));
@@ -157,7 +157,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
               throw new Error();
             }
           } catch {
-            setState(x => ({
+            setState((x) => ({
               ...x,
               errorMessage: 'Error verifying signature, please retry!',
               status: 'idle',
@@ -171,10 +171,10 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         },
       };
 
-      setState(x => ({ ...x, status: 'verifying' }));
+      setState((x) => ({ ...x, status: 'verifying' }));
       await signMessage(signMessageOptions);
     } catch {
-      setState(x => ({
+      setState((x) => ({
         ...x,
         errorMessage: 'Error signing message, please retry!',
         status: 'idle',
@@ -186,7 +186,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   const signLeather = async () => {
     try {
-      setState(x => ({
+      setState((x) => ({
         ...x,
         errorMessage: undefined,
         status: 'signing',
@@ -201,7 +201,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       const signMsg = authAdapter.getMessageBody({ message });
 
       if (!window.StacksProvider) {
-        setState(x => ({
+        setState((x) => ({
           ...x,
           errorMessage: 'Error verifying signature, please retry!',
           status: 'idle',
@@ -209,7 +209,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         return;
       }
 
-      setState(x => ({ ...x, status: 'verifying' }));
+      setState((x) => ({ ...x, status: 'verifying' }));
 
       const { result } = await window.StacksProvider.request('signMessage', {
         message: signMsg,
@@ -223,7 +223,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       setBtcinfo?.(connector.btcData);
     } catch {
-      setState(x => ({
+      setState((x) => ({
         ...x,
         errorMessage: 'Error signing message, please retry!',
         status: 'idle',
@@ -242,7 +242,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
     }
 
     try {
-      setState(x => ({
+      setState((x) => ({
         ...x,
         errorMessage: undefined,
         status: 'signing',
@@ -258,7 +258,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       // @ts-ignore
       if (!window.btc) {
-        setState(x => ({
+        setState((x) => ({
           ...x,
           errorMessage: 'Error verifying signature, please retry!',
           status: 'idle',
@@ -266,7 +266,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         return;
       }
 
-      setState(x => ({ ...x, status: 'verifying' }));
+      setState((x) => ({ ...x, status: 'verifying' }));
 
       // @ts-ignore
       const signature = await window.unisat?.signMessage(signMsg);
@@ -275,7 +275,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         signature,
       });
     } catch {
-      setState(x => ({
+      setState((x) => ({
         ...x,
         errorMessage: 'Error signing message, please retry!',
         status: 'idle',

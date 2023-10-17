@@ -86,13 +86,12 @@ type PropsType = {
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { locale } = useRouter() as { locale: Locale };
   return (
     <WagmiConfig config={wagmiConfig}>
-      <BtcProvider>
-        <AuthProvider>
-          <Component {...pageProps} />
-        </AuthProvider>
-      </BtcProvider>
+      <RainbowKitProvider appInfo={demoAppInfo} chains={chains} locale={locale}>
+        <Component {...pageProps} />
+      </RainbowKitProvider>
     </WagmiConfig>
   );
 }

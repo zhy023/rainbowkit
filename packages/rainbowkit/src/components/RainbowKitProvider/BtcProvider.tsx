@@ -1,7 +1,7 @@
 import '@stacks/connect';
 import React, {
-  createContext,
   ReactNode,
+  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -16,14 +16,6 @@ interface BtcInfoValue {
   btcInfo: BtcAddressInfo;
   setBtcinfo?: (value: BtcAddressInfo) => void;
 }
-
-// declare global {
-//   interface Window {
-//     btc?: {
-//       request(method: string, params?: any[]): Promise<Record<string, any>>;
-//     };
-//   }
-// }
 
 function useBtcInfoState() {
   const [btcInfo, setBtcinfo] = useState(() => getBtcStore());
@@ -56,17 +48,15 @@ export const checkBitWallet = (conn?: Connector) => {
 
 export function BtcProvider(props: { children: ReactNode }) {
   const { btcInfo, setBtcinfo } = useBtcInfoState();
+  const v = useMemo(() => {
+    return {
+      btcInfo: Object.assign(def, btcInfo),
+      setBtcinfo,
+    };
+  }, [btcInfo, setBtcinfo]);
 
   return (
-    <BtcInfoContext.Provider
-      value={useMemo(
-        () => ({
-          btcInfo,
-          setBtcinfo,
-        }),
-        [btcInfo, setBtcinfo]
-      )}
-    >
+    <BtcInfoContext.Provider value={v}>
       {props.children}
     </BtcInfoContext.Provider>
   );
@@ -82,20 +72,17 @@ export const useAddressCurrent = () => {
   // ----------------------------------------------------------------------------------
 
   // leatherWallet send token
-  async function sendBtcTransfer(
-    address: string,
-    amount: string
-  ): Promise<string | undefined> {
+  async function sendBtcTransfer(amount: string, address: string) {
     if (
       typeof window === 'undefined' ||
       typeof window.StacksProvider === 'undefined'
     ) {
-      return;
+      return '';
     }
 
     const res = await window.StacksProvider.request('sendTransfer', {
-      address,
       amount: fmtBit.toSatoshi(amount),
+      address,
       network: btcInfo.network,
     } as any);
 

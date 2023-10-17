@@ -20,12 +20,12 @@ export const btcStorageKey = 'dpt_btc_walllet';
 
 // ----------------------------------------------------------------------------------
 
-export function getBtcStore(): BtcAddressInfo {
-  return getJsonData(
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem(btcStorageKey)
-      : null
-  );
+export function getBtcStore(): BtcAddressInfo | null {
+  if (typeof localStorage !== 'undefined') {
+    return getJsonData(localStorage.getItem(btcStorageKey));
+  }
+
+  return null;
 }
 
 // ----------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ function getJsonData(string: string | null): BtcAddressInfo {
   try {
     const value = string ? JSON.parse(string) : {};
     return typeof value === 'object' ? value : {};
-  } catch (err) {
+  } catch {
     return { ...def };
   }
 }

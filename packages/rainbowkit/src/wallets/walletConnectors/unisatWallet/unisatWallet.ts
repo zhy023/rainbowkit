@@ -1,5 +1,5 @@
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
-import { createTestClient, http, publicActions, walletActions } from 'viem';
+import { http, createTestClient, publicActions, walletActions } from 'viem';
 import { foundry } from 'viem/chains';
 import {
   BtcAddressInfo,

@@ -1,6 +1,6 @@
 import '@stacks/connect';
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock';
-import { createTestClient, http, publicActions, walletActions } from 'viem';
+import { http, createTestClient, publicActions, walletActions } from 'viem';
 import { foundry } from 'viem/chains';
 import {
   BtcAddressInfo,
@@ -70,7 +70,7 @@ class LeatherConnector extends MockConnector {
     const res = await window.StacksProvider.request('getAddresses');
     const address = res?.result.addresses ?? [];
     const info = address.find(
-      (addr: { type: string }) => addr.type === 'p2wpkh'
+      (addr: { type: string }) => addr.type === 'p2wpkh',
     );
 
     if (!info) {
