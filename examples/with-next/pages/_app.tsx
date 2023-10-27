@@ -3,19 +3,14 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { ReactNode } from 'react';
 import type { AppProps } from 'next/app';
 import {
-  BtcProvider,
+  lightTheme,
   RainbowKitProvider,
   connectorsForWallets,
   RainbowKitAuthenticationProvider,
 } from '@rainbow-me/rainbowkit';
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 
-import {
-  // argentWallet,
-  trustWallet,
-  // ledgerWallet,
-  hiroWallet,
-} from '@rainbow-me/rainbowkit/wallets';
+import { trustWallet, leatherWallet } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
@@ -27,8 +22,15 @@ import {
   goerli,
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+
 import { useAtom } from 'jotai';
 import { useAuth, authAtom } from '../js/auth';
+
+const theme = lightTheme();
+theme.fonts.body = 'PoppinsMedium';
+theme.radii.modal = '16px';
+theme.radii.modalMobile = '16px';
+theme.shadows.dialog = 'none';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -69,7 +71,7 @@ const connectors = connectorsForWallets([
         },
       }),
       trustWallet({ chains, projectId, shimDisconnect: true }),
-      hiroWallet({ network: 'testnet' }),
+      leatherWallet({ network: 'testnet' }),
     ],
   },
 ]);
@@ -86,12 +88,11 @@ type PropsType = {
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { locale } = useRouter() as { locale: Locale };
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider appInfo={demoAppInfo} chains={chains} locale={locale}>
+      <AuthProvider>
         <Component {...pageProps} />
-      </RainbowKitProvider>
+      </AuthProvider>
     </WagmiConfig>
   );
 }
@@ -105,7 +106,12 @@ function AuthProvider(props: PropsType) {
       adapter={authenticationAdapter}
       status={auth}
     >
-      <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
+      <RainbowKitProvider
+        modalSize="compact"
+        theme={theme}
+        appInfo={demoAppInfo}
+        chains={chains}
+      >
         {props.children}
       </RainbowKitProvider>
     </RainbowKitAuthenticationProvider>

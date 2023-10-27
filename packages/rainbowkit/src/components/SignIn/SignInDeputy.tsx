@@ -308,13 +308,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
   return (
     <Box position="relative">
-      <Box
-        display="flex"
-        paddingRight="16"
-        paddingTop="16"
-        position="absolute"
-        right="0"
-      >
+      <Box display="flex" paddingLeft="16" paddingTop="16" position="absolute">
         <CloseButton onClose={onClose} />
       </Box>
       <Box

@@ -184,11 +184,10 @@ enum MobileWalletStep {
 }
 
 export function MobileOptions({ onClose }: { onClose: () => void }) {
-  const titleId = 'rk_connect_title';
   const wallets = useWalletConnectors();
   const { disclaimer: Disclaimer, learnMoreUrl } = useContext(AppContext);
 
-  let headerLabel = null;
+  // let headerLabel = null;
   let walletContent = null;
   let headerBackgroundContrast = false;
   let headerBackButtonLink: MobileWalletStep | null = null;
@@ -203,7 +202,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
 
   switch (walletStep) {
     case MobileWalletStep.Connect: {
-      headerLabel = i18n.t('connect.title');
+      // headerLabel = i18n.t('connect.title');
       headerBackgroundContrast = true;
       walletContent = (
         <Box>
@@ -285,7 +284,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
       break;
     }
     case MobileWalletStep.Get: {
-      headerLabel = i18n.t('get.title');
+      // headerLabel = i18n.t('get.title');
       headerBackButtonLink = MobileWalletStep.Connect;
 
       const mobileWallets = wallets
@@ -412,7 +411,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
       >
         <Box
           display="flex"
-          justifyContent="center"
+          justifyContent="space-between"
           paddingBottom="6"
           paddingX="20"
           position="relative"
@@ -448,32 +447,8 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
               </Box>
             </Box>
           )}
-
-          <Box marginTop="4" textAlign="center" width="full">
-            <Text
-              as="h1"
-              color="modalText"
-              id={titleId}
-              size="20"
-              weight="bold"
-            >
-              {headerLabel}
-            </Text>
-          </Box>
-
-          <Box
-            alignItems="center"
-            display="flex"
-            height="32"
-            paddingRight="14"
-            position="absolute"
-            right="0"
-          >
-            <Box
-              style={{ marginBottom: -20, marginTop: -20 }} // Vertical bleed
-            >
-              <CloseButton onClose={onClose} />
-            </Box>
+          <Box>
+            <CloseButton onClose={onClose} />
           </Box>
         </Box>
       </Box>

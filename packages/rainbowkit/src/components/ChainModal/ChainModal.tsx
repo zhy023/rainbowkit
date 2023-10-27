@@ -56,18 +56,6 @@ export function ChainModal({ onClose, open }: ChainModalProps) {
             flexDirection="row"
             justifyContent="space-between"
           >
-            {mobile && <Box width="30" />}
-            <Box paddingBottom="0" paddingLeft="8" paddingTop="4">
-              <Text
-                as="h1"
-                color="modalText"
-                id={titleId}
-                size={mobile ? '20' : '18'}
-                weight="heavy"
-              >
-                {i18n.t('chains.title')}
-              </Text>
-            </Box>
             <CloseButton onClose={onClose} />
           </Box>
           {unsupportedChain && (

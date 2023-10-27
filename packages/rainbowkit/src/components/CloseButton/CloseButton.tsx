@@ -17,7 +17,6 @@ export const CloseButton = ({
       alignItems="center"
       aria-label={ariaLabel}
       as="button"
-      background="closeButtonBackground"
       borderColor="actionButtonBorder"
       borderRadius="full"
       borderStyle="solid"

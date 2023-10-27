@@ -48,7 +48,6 @@ export enum WalletStep {
 }
 
 export function DesktopOptions({ onClose }: { onClose: () => void }) {
-  const titleId = 'rk_connect_title';
   const safari = isSafari();
   const [selectedOptionId, setSelectedOptionId] = useState<
     string | undefined
@@ -329,36 +328,16 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
           marginTop="16"
         >
           <Box display="flex" justifyContent="space-between">
+            <Box marginLeft="16" width="28">
+              <CloseButton onClose={onClose} />
+            </Box>
+          </Box>
+          <Box display="flex" justifyContent="center">
             {compactModeEnabled && Disclaimer && (
               <Box marginLeft="16" width="28">
                 <InfoButton
                   onClick={() => changeWalletStep(WalletStep.LearnCompact)}
                 />
-              </Box>
-            )}
-            {compactModeEnabled && !Disclaimer && (
-              <Box marginLeft="16" width="28" />
-            )}
-            <Box
-              marginLeft={compactModeEnabled ? '0' : '6'}
-              paddingBottom="8"
-              paddingTop="2"
-              paddingX="18"
-            >
-              <Text
-                as="h1"
-                color="modalText"
-                id={titleId}
-                size="18"
-                weight="heavy"
-                testId={'connect-header-label'}
-              >
-                {i18n.t('connect.title')}
-              </Text>
-            </Box>
-            {compactModeEnabled && (
-              <Box marginRight="16">
-                <CloseButton onClose={onClose} />
               </Box>
             )}
           </Box>
@@ -502,6 +481,7 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                 justifyContent="center"
                 style={{ flexGrow: 1 }}
               >
+                <CloseButton onClose={onClose} />
                 {headerLabel && (
                   <Text
                     color="modalText"
@@ -513,7 +493,6 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                   </Text>
                 )}
               </Box>
-              <CloseButton onClose={onClose} />
             </Box>
             <Box
               display="flex"
