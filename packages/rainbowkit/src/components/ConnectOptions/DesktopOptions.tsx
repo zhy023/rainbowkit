@@ -457,7 +457,6 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                       active: 'shrinkSm',
                       hover: 'growLg',
                     })}
-                    color="accentColor"
                     onClick={() => {
                       headerBackButtonLink &&
                         changeWalletStep(headerBackButtonLink, true);
@@ -467,8 +466,8 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                     paddingY="4"
                     style={{
                       boxSizing: 'content-box',
-                      height: 17,
-                      willChange: 'transform',
+                      height: 16,
+                      width: 28,
                     }}
                     transition="default"
                     type="button"
