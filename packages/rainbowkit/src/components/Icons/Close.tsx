@@ -8,7 +8,7 @@ export const CloseIcon = () => {
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g stroke="none" stroke-width="1" fill="none">
+      <g stroke="none" strokeWidth="1" fill="none">
         <g transform="translate(-1148.9428, -41.9535)">
           <g transform="translate(1144, 32)">
             <polygon opacity="0" points="0 0 32 0 32 32 0 32" />
@@ -27,7 +27,7 @@ export const CloseIcon = () => {
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g stroke="none" stroke-width="1" fill="none">
+      <g stroke="none" strokeWidth="1" fill="none">
         <g transform="translate(-1148.9428, -41.9535)">
           <g transform="translate(1144, 32)">
             <polygon opacity="0" points="0 0 32 0 32 32 0 32" />
