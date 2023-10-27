@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { touchableStyles } from '../../css/touchableStyles';
 import { isIOS } from '../../utils/isMobile';
 import {
   WalletConnector,
@@ -11,7 +10,6 @@ import { ActionButton } from '../Button/ActionButton';
 import { CloseButton } from '../CloseButton/CloseButton';
 import { DisclaimerLink } from '../Disclaimer/DisclaimerLink';
 import { DisclaimerText } from '../Disclaimer/DisclaimerText';
-import { BackIcon } from '../Icons/Back';
 import { AppContext } from '../RainbowKitProvider/AppContext';
 import { I18nContext } from '../RainbowKitProvider/I18nContext';
 import { useCoolMode } from '../RainbowKitProvider/useCoolMode';
@@ -190,7 +188,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
   // let headerLabel = null;
   let walletContent = null;
   let headerBackgroundContrast = false;
-  let headerBackButtonLink: MobileWalletStep | null = null;
+  // let headerBackButtonLink: MobileWalletStep | null = null;
 
   const [walletStep, setWalletStep] = useState<MobileWalletStep>(
     MobileWalletStep.Connect,
@@ -285,7 +283,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
     }
     case MobileWalletStep.Get: {
       // headerLabel = i18n.t('get.title');
-      headerBackButtonLink = MobileWalletStep.Connect;
+      // headerBackButtonLink = MobileWalletStep.Connect;
 
       const mobileWallets = wallets
         ?.filter(
@@ -416,37 +414,6 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
           paddingX="20"
           position="relative"
         >
-          {headerBackButtonLink && (
-            <Box
-              display="flex"
-              position="absolute"
-              style={{
-                left: 0,
-                marginBottom: -20,
-                marginTop: -20,
-              }}
-            >
-              <Box
-                alignItems="center"
-                as="button"
-                className={touchableStyles({
-                  active: 'shrinkSm',
-                  hover: 'growLg',
-                })}
-                color="accentColor"
-                display="flex"
-                marginLeft="4"
-                marginTop="20"
-                onClick={() => setWalletStep(headerBackButtonLink!)}
-                padding="16"
-                style={{ height: 17, willChange: 'transform' }}
-                transition="default"
-                type="button"
-              >
-                <BackIcon />
-              </Box>
-            </Box>
-          )}
           <Box>
             <CloseButton onClose={onClose} />
           </Box>

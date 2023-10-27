@@ -11,7 +11,8 @@ import { CloseButton } from '../CloseButton/CloseButton';
 import { ConnectModalIntro } from '../ConnectModal/ConnectModalIntro';
 import { DisclaimerLink } from '../Disclaimer/DisclaimerLink';
 import { DisclaimerText } from '../Disclaimer/DisclaimerText';
-import { BackIcon } from '../Icons/Back';
+import { CloseIcon } from '../Icons/Close';
+
 import { InfoButton } from '../InfoButton/InfoButton';
 import { ModalSelection } from '../ModalSelection/ModalSelection';
 import { AppContext } from '../RainbowKitProvider/AppContext';
@@ -472,7 +473,7 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                     transition="default"
                     type="button"
                   >
-                    <BackIcon />
+                    <CloseIcon />
                   </Box>
                 )}
               </Box>
@@ -481,7 +482,6 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                 justifyContent="center"
                 style={{ flexGrow: 1 }}
               >
-                <CloseButton onClose={onClose} />
                 {headerLabel && (
                   <Text
                     color="modalText"
