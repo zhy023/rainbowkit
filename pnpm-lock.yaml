@@ -119,9 +119,6 @@ importers:
 
   examples/with-next:
     dependencies:
-      '@rainbow-me/rainbowkit':
-        specifier: workspace:*
-        version: link:../../packages/rainbowkit
       '@stacks/auth':
         specifier: ^6.7.0
         version: 6.7.0
@@ -131,6 +128,9 @@ importers:
       jotai:
         specifier: ^2.3.1
         version: 2.3.1(@types/react@18.2.22)(react@18.2.0)
+      rainbowkit-deputy:
+        specifier: workspace:*
+        version: link:../../packages/rainbowkit
       sats-connect:
         specifier: ^0.5.0
         version: 0.5.0
