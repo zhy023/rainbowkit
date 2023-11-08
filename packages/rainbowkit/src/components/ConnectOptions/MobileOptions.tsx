@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react';
+import { touchableStyles } from '../../css/touchableStyles';
 import { isIOS } from '../../utils/isMobile';
 import {
   WalletConnector,
@@ -10,32 +11,13 @@ import { ActionButton } from '../Button/ActionButton';
 import { CloseButton } from '../CloseButton/CloseButton';
 import { DisclaimerLink } from '../Disclaimer/DisclaimerLink';
 import { DisclaimerText } from '../Disclaimer/DisclaimerText';
+import { BackIcon } from '../Icons/Back';
 import { AppContext } from '../RainbowKitProvider/AppContext';
 import { I18nContext } from '../RainbowKitProvider/I18nContext';
 import { useCoolMode } from '../RainbowKitProvider/useCoolMode';
 import { setWalletConnectDeepLink } from '../RainbowKitProvider/walletConnectDeepLink';
 import { Text } from '../Text/Text';
 import * as styles from './MobileOptions.css';
-
-// ----------------------------------------------------------------------------------
-
-// mock trust wallet
-function mkTrust() {
-  const url = window.location.href;
-
-  return (
-    url.indexOf('only=trust') > 0 ||
-    window.trustwallet ||
-    window.ethereum?.isTrust ||
-    // @ts-ignore
-    window.trustwallet?.solana?.isTrust
-  );
-}
-
-const trastName = 'Trust Wallet';
-const trastIcon = async () => (await import('./trustWallet.svg')).default;
-
-// ----------------------------------------------------------------------------------
 
 function WalletButton({
   onClose,
@@ -131,25 +113,14 @@ function WalletButton({
         justifyContent="center"
       >
         <Box paddingBottom="8" paddingTop="10">
-          {mkTrust() ? (
-            <AsyncImage
-              background={iconBackground}
-              borderRadius="13"
-              boxShadow="walletLogo"
-              height="60"
-              src={trastIcon}
-              width="60"
-            />
-          ) : (
-            <AsyncImage
-              background={iconBackground}
-              borderRadius="13"
-              boxShadow="walletLogo"
-              height="60"
-              src={iconUrl}
-              width="60"
-            />
-          )}
+          <AsyncImage
+            background={iconBackground}
+            borderRadius="13"
+            boxShadow="walletLogo"
+            height="60"
+            src={iconUrl}
+            width="60"
+          />
         </Box>
         <Box display="flex" flexDirection="column" textAlign="center">
           <Text
@@ -160,7 +131,7 @@ function WalletButton({
           >
             {/* Fix button text clipping in Safari: https://stackoverflow.com/questions/41100273/overflowing-button-text-is-being-clipped-in-safari */}
             <Box as="span" position="relative">
-              {mkTrust() ? trastName : shortName ?? name}
+              {shortName ?? name}
               {!wallet.ready && ' (unsupported)'}
             </Box>
           </Text>
@@ -182,13 +153,14 @@ enum MobileWalletStep {
 }
 
 export function MobileOptions({ onClose }: { onClose: () => void }) {
+  const titleId = 'rk_connect_title';
   const wallets = useWalletConnectors();
   const { disclaimer: Disclaimer, learnMoreUrl } = useContext(AppContext);
 
-  // let headerLabel = null;
+  let headerLabel = null;
   let walletContent = null;
   let headerBackgroundContrast = false;
-  // let headerBackButtonLink: MobileWalletStep | null = null;
+  let headerBackButtonLink: MobileWalletStep | null = null;
 
   const [walletStep, setWalletStep] = useState<MobileWalletStep>(
     MobileWalletStep.Connect,
@@ -200,7 +172,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
 
   switch (walletStep) {
     case MobileWalletStep.Connect: {
-      // headerLabel = i18n.t('connect.title');
+      headerLabel = i18n.t('connect.title');
       headerBackgroundContrast = true;
       walletContent = (
         <Box>
@@ -282,8 +254,8 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
       break;
     }
     case MobileWalletStep.Get: {
-      // headerLabel = i18n.t('get.title');
-      // headerBackButtonLink = MobileWalletStep.Connect;
+      headerLabel = i18n.t('get.title');
+      headerBackButtonLink = MobileWalletStep.Connect;
 
       const mobileWallets = wallets
         ?.filter(
@@ -409,13 +381,68 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
       >
         <Box
           display="flex"
-          justifyContent="space-between"
+          justifyContent="center"
           paddingBottom="6"
           paddingX="20"
           position="relative"
         >
-          <Box>
-            <CloseButton onClose={onClose} />
+          {headerBackButtonLink && (
+            <Box
+              display="flex"
+              position="absolute"
+              style={{
+                left: 0,
+                marginBottom: -20,
+                marginTop: -20,
+              }}
+            >
+              <Box
+                alignItems="center"
+                as="button"
+                className={touchableStyles({
+                  active: 'shrinkSm',
+                  hover: 'growLg',
+                })}
+                color="accentColor"
+                display="flex"
+                marginLeft="4"
+                marginTop="20"
+                onClick={() => setWalletStep(headerBackButtonLink!)}
+                padding="16"
+                style={{ height: 17, willChange: 'transform' }}
+                transition="default"
+                type="button"
+              >
+                <BackIcon />
+              </Box>
+            </Box>
+          )}
+
+          <Box marginTop="4" textAlign="center" width="full">
+            <Text
+              as="h1"
+              color="modalText"
+              id={titleId}
+              size="20"
+              weight="bold"
+            >
+              {headerLabel}
+            </Text>
+          </Box>
+
+          <Box
+            alignItems="center"
+            display="flex"
+            height="32"
+            paddingRight="14"
+            position="absolute"
+            right="0"
+          >
+            <Box
+              style={{ marginBottom: -20, marginTop: -20 }} // Vertical bleed
+            >
+              <CloseButton onClose={onClose} />
+            </Box>
           </Box>
         </Box>
       </Box>

@@ -11,8 +11,7 @@ import { CloseButton } from '../CloseButton/CloseButton';
 import { ConnectModalIntro } from '../ConnectModal/ConnectModalIntro';
 import { DisclaimerLink } from '../Disclaimer/DisclaimerLink';
 import { DisclaimerText } from '../Disclaimer/DisclaimerText';
-import { CloseIcon } from '../Icons/Close';
-
+import { BackIcon } from '../Icons/Back';
 import { InfoButton } from '../InfoButton/InfoButton';
 import { ModalSelection } from '../ModalSelection/ModalSelection';
 import { AppContext } from '../RainbowKitProvider/AppContext';
@@ -51,6 +50,7 @@ export enum WalletStep {
 }
 
 export function DesktopOptions({ onClose }: { onClose: () => void }) {
+  const titleId = 'rk_connect_title';
   const safari = isSafari();
   const [selectedOptionId, setSelectedOptionId] = useState<
     string | undefined
@@ -350,16 +350,36 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
           marginTop="16"
         >
           <Box display="flex" justifyContent="space-between">
-            <Box marginLeft="16" width="28">
-              <CloseButton onClose={onClose} />
-            </Box>
-          </Box>
-          <Box display="flex" justifyContent="center">
             {compactModeEnabled && Disclaimer && (
               <Box marginLeft="16" width="28">
                 <InfoButton
                   onClick={() => changeWalletStep(WalletStep.LearnCompact)}
                 />
+              </Box>
+            )}
+            {compactModeEnabled && !Disclaimer && (
+              <Box marginLeft="16" width="28" />
+            )}
+            <Box
+              marginLeft={compactModeEnabled ? '0' : '6'}
+              paddingBottom="8"
+              paddingTop="2"
+              paddingX="18"
+            >
+              <Text
+                as="h1"
+                color="modalText"
+                id={titleId}
+                size="18"
+                weight="heavy"
+                testId={'connect-header-label'}
+              >
+                {i18n.t('connect.title')}
+              </Text>
+            </Box>
+            {compactModeEnabled && (
+              <Box marginRight="16">
+                <CloseButton onClose={onClose} />
               </Box>
             )}
           </Box>
@@ -478,6 +498,7 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                       active: 'shrinkSm',
                       hover: 'growLg',
                     })}
+                    color="accentColor"
                     onClick={() => {
                       headerBackButtonLink &&
                         changeWalletStep(headerBackButtonLink, true);
@@ -487,13 +508,13 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                     paddingY="4"
                     style={{
                       boxSizing: 'content-box',
-                      height: 16,
-                      width: 28,
+                      height: 17,
+                      willChange: 'transform',
                     }}
                     transition="default"
                     type="button"
                   >
-                    <CloseIcon />
+                    <BackIcon />
                   </Box>
                 )}
               </Box>
@@ -513,6 +534,7 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
                   </Text>
                 )}
               </Box>
+              <CloseButton onClose={onClose} />
             </Box>
             <Box
               display="flex"

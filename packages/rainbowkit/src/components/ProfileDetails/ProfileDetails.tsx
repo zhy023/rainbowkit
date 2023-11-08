@@ -82,13 +82,13 @@ export function ProfileDetails({
             <Box
               style={{
                 position: 'absolute',
-                left: 16,
+                right: 16,
                 top: 16,
                 willChange: 'transform',
               }}
             >
               <CloseButton onClose={onClose} />
-            </Box>
+            </Box>{' '}
             <Box marginTop={mobile ? '24' : '0'}>
               <Avatar
                 address={address}
