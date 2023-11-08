@@ -11,3 +11,7 @@ declare module '*.png' {
 declare module 'satoshi-bitcoin';
 
 declare module 'i18n-js/dist/require/index.js';
+
+declare interface Window {
+  btc: any;
+}

@@ -73,14 +73,11 @@ export const useAddressCurrent = () => {
 
   // leatherWallet send token
   async function sendBtcTransfer(amount: string, address: string) {
-    if (
-      typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined'
-    ) {
+    if (typeof window === 'undefined' || typeof window.btc === 'undefined') {
       return '';
     }
 
-    const res = await window.StacksProvider.request('sendTransfer', {
+    const res = await window.btc.request('sendTransfer', {
       amount: fmtBit.toSatoshi(amount),
       address,
       network: btcInfo.network,
@@ -100,14 +97,11 @@ export const useAddressCurrent = () => {
       }
     | undefined
   > {
-    if (
-      typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined'
-    ) {
+    if (typeof window === 'undefined' || typeof window.btc === 'undefined') {
       return;
     }
 
-    const res = await window.StacksProvider.request('signMessage', {
+    const res = await window.btc.request('signMessage', {
       message,
       network: btcInfo.network,
     } as any);

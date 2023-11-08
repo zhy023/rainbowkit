@@ -200,7 +200,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       const signMsg = authAdapter.getMessageBody({ message });
 
-      if (!window.StacksProvider) {
+      if (!window.btc) {
         setState((x) => ({
           ...x,
           errorMessage: 'Error verifying signature, please retry!',
@@ -211,7 +211,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       setState((x) => ({ ...x, status: 'verifying' }));
 
-      const { result } = await window.StacksProvider.request('signMessage', {
+      const { result } = await window.btc.request('signMessage', {
         message: signMsg,
         network: connector.btcData.network,
       } as any);

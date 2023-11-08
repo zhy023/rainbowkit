@@ -62,12 +62,14 @@ class LeatherConnector extends MockConnector {
   async connect() {
     if (
       typeof window === 'undefined' ||
-      typeof window.StacksProvider === 'undefined'
+      typeof window.btc === 'undefined' ||
+      // @ts-ignore
+      this._eventsCount < 1
     ) {
       return;
     }
 
-    const res = await window.StacksProvider.request('getAddresses');
+    const res = await window.btc.request('getAddresses');
     const address = res?.result.addresses ?? [];
     const info = address.find(
       (addr: { type: string }) => addr.type === 'p2wpkh',
@@ -92,11 +94,8 @@ class LeatherConnector extends MockConnector {
 // ----------------------------------------------------------------------------------
 
 export const leatherWallet = (optios: LeatherOptions): Wallet => {
-  const isLeatherInjected =
-    typeof window !== 'undefined' &&
-    typeof window.StacksProvider !== 'undefined' &&
-    typeof window.StacksProvider?.request !== 'undefined';
-  const shouldUseWalletConnect = !isLeatherInjected;
+  const isInstall =
+    typeof window !== 'undefined' && typeof window.btc !== 'undefined';
 
   return {
     createConnector: () => {
@@ -121,7 +120,7 @@ export const leatherWallet = (optios: LeatherOptions): Wallet => {
     iconUrl:
       'https://lh3.googleusercontent.com/L2-6RY-R0J7MfguWZugMMEupyf60d9nY7tGT-vdJbKuxIVEEh0Kqu-5_G61hC47N5klx0p9196JCmS81dmJOA5OTIw',
     id,
-    installed: !shouldUseWalletConnect ? isLeatherInjected : undefined,
+    installed: isInstall || undefined,
     name,
   };
 };
