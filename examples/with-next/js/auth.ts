@@ -1,6 +1,5 @@
 import {
   createAuthenticationAdapter,
-  AuthenticationStatus,
   useAddressCurrent,
 } from 'rainbowkit-deputy';
 import { atom, useAtom } from 'jotai';
