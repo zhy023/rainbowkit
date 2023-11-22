@@ -55,6 +55,109 @@ const LoadingSpinner = ({ wallet }: { wallet: WalletConnector }) => {
   );
 };
 
+// ----------------------------------------------------------------------------------
+
+function getProtocol() {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  return `${window.location.protocol}://`;
+}
+
+// ----------------------------------------------------------------------------------
+
+function getDomain() {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  return window.location.host;
+}
+
+// ----------------------------------------------------------------------------------
+
+function getDeepLink(id: string) {
+  const prot = getProtocol();
+  const domain = getDomain();
+  const prev = `${prot}${domain}`;
+
+  if (id === 'metaMask') {
+    return `https://metamask.app.link/dapp/${domain}?w=metaMask`;
+  }
+
+  if (id === 'coinbase') {
+    return `https://go.cb-w.com/dapp?cb_url=${prev}?w=coinbase`;
+  }
+
+  if (id === 'tokenPocket') {
+    return `tpdapp://open?params={'url': '${prev}?w=tokenPocket'}`;
+  }
+
+  if (id === 'trust') {
+    return `https://link.trustwallet.com/open_url?coin_id=20000714&url=${prev}?w=trust`;
+  }
+
+  return '';
+}
+
+// ----------------------------------------------------------------------------------
+
+export const deepLinkWallets = ['metaMask', 'coinbase', 'tokenPocket', 'trust'];
+
+// ----------------------------------------------------------------------------------
+
+export function isInWalletBrowser(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const ethereum = window.ethereum;
+
+  if (!ethereum?.isMetaMask) return true;
+  if (ethereum.isBraveWallet && !ethereum._events && !ethereum._state)
+    return true;
+  if (ethereum.isApexWallet) return true;
+  if (ethereum.isAvalanche) return true;
+  if (ethereum.isBackpack) return true;
+  if (ethereum.isBifrost) return true;
+  if (ethereum.isBitKeep) return true;
+  if (ethereum.isBitski) return true;
+  if (ethereum.isBlockWallet) return true;
+  if (ethereum.isCoinbaseWallet) return true;
+  if (ethereum.isDawn) return true;
+  if (ethereum.isEnkrypt) return true;
+  if (ethereum.isExodus) return true;
+  if (ethereum.isFrame) return true;
+  if (ethereum.isFrontier) return true;
+  if (ethereum.isGamestop) return true;
+  if (ethereum.isHyperPay) return true;
+  if (ethereum.isImToken) return true;
+  if (ethereum.isKuCoinWallet) return true;
+  if (ethereum.isMathWallet) return true;
+  if (ethereum.isOkxWallet || ethereum.isOKExWallet) return true;
+  if (ethereum.isOneInchIOSWallet || ethereum.isOneInchAndroidWallet)
+    return true;
+  if (ethereum.isOpera) return true;
+  if (ethereum.isPhantom) return true;
+  if (ethereum.isPortal) return true;
+  if (ethereum.isRabby) return true;
+  if (ethereum.isRainbow) return true;
+  if (ethereum.isStatus) return true;
+  if (ethereum.isTalisman) return true;
+  if (ethereum.isTally) return true;
+  if (ethereum.isTokenPocket) return true;
+  if (ethereum.isTokenary) return true;
+  if (ethereum.isTrust || ethereum.isTrustWallet) return true;
+  if (ethereum.isXDEFI) return true;
+  if (ethereum.isZeal) return true;
+  if (ethereum.isZerion) return true;
+
+  return false;
+}
+
+// ----------------------------------------------------------------------------------
+
 export function WalletButton({
   onClose,
   wallet,
@@ -81,93 +184,21 @@ export function WalletButton({
   const initialized = useRef(false);
   const i18n = useContext(I18nContext);
 
-  const metaMaskDeeplink = (domain: string) =>
-    `https://metamask.app.link/dapp/${domain}?w=metaMask`;
-
-  const coinbaseDeeplink = (url: string) =>
-    `https://go.cb-w.com/dapp?cb_url=${url}?w=coinbase`;
-
-  const tokenPocketDeeplink = (url: string) =>
-    `tpdapp://open?params={'url': '${url}?w=tokenPocket'}`;
-
-  const trustDeeplink = (url: string) =>
-    `https://link.trustwallet.com/open_url?coin_id=20000714&url=${url}?w=trust`;
-
-  // ----------------------------------------------------------------------------------
-
-  function getProtocol() {
-    if (typeof window === 'undefined') {
-      return '';
-    }
-
-    return `${window.location.protocol}://`;
-  }
-
-  // ----------------------------------------------------------------------------------
-
-  function getDomain() {
-    if (typeof window === 'undefined') {
-      return '';
-    }
-
-    return window.location.host;
-  }
-
-  // ----------------------------------------------------------------------------------
-
-  function getOnly(): string | null {
-    if (typeof window === 'undefined') {
-      return null;
-    }
-
-    const currentUrl = window.location.href;
-    const url = new URL(currentUrl);
-    const params = url.searchParams;
-
-    // same rainbowkit
-    return params.get('w');
-  }
-
-  // ----------------------------------------------------------------------------------
-
-  function getDeepLink() {
-    const prot = getProtocol();
-    const domain = getDomain();
-    const prev = `${prot}${domain}`;
-
-    if (id === 'metaMask') {
-      return metaMaskDeeplink(domain);
-    }
-
-    if (id === 'coinbase') {
-      return coinbaseDeeplink(prev);
-    }
-
-    if (id === 'tokenPocket') {
-      return tokenPocketDeeplink(prev);
-    }
-
-    if (id === 'trust') {
-      return trustDeeplink(prev);
-    }
-
-    return '';
-  }
-
   // ----------------------------------------------------------------------------------
 
   const onConnect = useCallback(async () => {
-    const isInWallet = getOnly();
-    const linkUrl = getDeepLink();
-    const link = document.createElement('a');
+    const isInWB = isInWalletBrowser();
 
-    link.href = linkUrl;
-    link.target = '_blank';
-    link.rel = 'noreferrer noopener';
-    link.click();
+    // no in wallet browser
+    if (!isInWB) {
+      const linkUrl = getDeepLink(id);
+      const link = document.createElement('a');
 
-    if (linkUrl) {
-      console.log(isInWallet);
+      link.href = linkUrl;
+      link.target = '_blank';
+      link.rel = 'noreferrer noopener';
+      link.click();
+      return;
     }
 
     if (id === 'walletConnect') onClose?.();
@@ -304,7 +335,6 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
   const titleId = 'rk_connect_title';
   const wallets = useWalletConnectors();
   const { disclaimer: Disclaimer, learnMoreUrl } = useContext(AppContext);
-  const [browserText, setBrowserText] = useState('');
 
   let headerLabel = null;
   let walletContent = null;
@@ -516,20 +546,9 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
     }
   }
 
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const v = window.navigator.userAgent.toLowerCase();
-
-    setBrowserText(v);
-  }, []);
-
   return (
     <Box display="flex" flexDirection="column" paddingBottom="36">
       {/* header section */}
-      <p>browser: {browserText}</p>
       <Box
         background={
           headerBackgroundContrast ? 'profileForeground' : 'modalBackground'
