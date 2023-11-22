@@ -112,48 +112,47 @@ export function isInWalletBrowser(): boolean {
     return false;
   }
 
-  const ethereum = window.ethereum;
-
-  if (!ethereum?.isMetaMask) return true;
-  if (ethereum.isBraveWallet && !ethereum._events && !ethereum._state)
-    return true;
-  if (ethereum.isApexWallet) return true;
-  if (ethereum.isAvalanche) return true;
-  if (ethereum.isBackpack) return true;
-  if (ethereum.isBifrost) return true;
-  if (ethereum.isBitKeep) return true;
-  if (ethereum.isBitski) return true;
-  if (ethereum.isBlockWallet) return true;
-  if (ethereum.isCoinbaseWallet) return true;
-  if (ethereum.isDawn) return true;
-  if (ethereum.isEnkrypt) return true;
-  if (ethereum.isExodus) return true;
-  if (ethereum.isFrame) return true;
-  if (ethereum.isFrontier) return true;
-  if (ethereum.isGamestop) return true;
-  if (ethereum.isHyperPay) return true;
-  if (ethereum.isImToken) return true;
-  if (ethereum.isKuCoinWallet) return true;
-  if (ethereum.isMathWallet) return true;
-  if (ethereum.isOkxWallet || ethereum.isOKExWallet) return true;
-  if (ethereum.isOneInchIOSWallet || ethereum.isOneInchAndroidWallet)
-    return true;
-  if (ethereum.isOpera) return true;
-  if (ethereum.isPhantom) return true;
-  if (ethereum.isPortal) return true;
-  if (ethereum.isRabby) return true;
-  if (ethereum.isRainbow) return true;
-  if (ethereum.isStatus) return true;
-  if (ethereum.isTalisman) return true;
-  if (ethereum.isTally) return true;
-  if (ethereum.isTokenPocket) return true;
-  if (ethereum.isTokenary) return true;
-  if (ethereum.isTrust || ethereum.isTrustWallet) return true;
-  if (ethereum.isXDEFI) return true;
-  if (ethereum.isZeal) return true;
-  if (ethereum.isZerion) return true;
-
-  return false;
+  return Boolean(
+    window.ethereum?.isMetaMask ||
+      window.ethereum?.isBraveWallet ||
+      window.ethereum?.isApexWallet ||
+      window.ethereum?.isAvalanche ||
+      window.ethereum?.isBackpack ||
+      window.ethereum?.isBifrost ||
+      window.ethereum?.isBitKeep ||
+      window.ethereum?.isBitski ||
+      window.ethereum?.isBlockWallet ||
+      window.ethereum?.isCoinbaseWallet ||
+      window.ethereum?.isDawn ||
+      window.ethereum?.isEnkrypt ||
+      window.ethereum?.isExodus ||
+      window.ethereum?.isFrame ||
+      window.ethereum?.isFrontier ||
+      window.ethereum?.isGamestop ||
+      window.ethereum?.isHyperPay ||
+      window.ethereum?.isImToken ||
+      window.ethereum?.isKuCoinWallet ||
+      window.ethereum?.isMathWallet ||
+      window.ethereum?.isOkxWallet ||
+      window.ethereum?.isOKExWallet ||
+      window.ethereum?.isOneInchIOSWallet ||
+      window.ethereum?.isOneInchAndroidWallet ||
+      window.ethereum?.isOpera ||
+      window.ethereum?.isPhantom ||
+      window.ethereum?.isPortal ||
+      window.ethereum?.isRabby ||
+      window.ethereum?.isRainbow ||
+      window.ethereum?.isStatus ||
+      window.ethereum?.isTalisman ||
+      window.ethereum?.isTally ||
+      window.ethereum?.isTokenPocket ||
+      window.ethereum?.isTokenary ||
+      window.ethereum?.isTrust ||
+      window.ethereum?.isTrustWallet ||
+      window.ethereum?.isXDEFI ||
+      window.ethereum?.isZeal ||
+      window.ethereum?.isZerion,
+  );
 }
 
 // ----------------------------------------------------------------------------------
@@ -335,6 +334,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
   const titleId = 'rk_connect_title';
   const wallets = useWalletConnectors();
   const { disclaimer: Disclaimer, learnMoreUrl } = useContext(AppContext);
+  const [s, setS] = useState('');
 
   let headerLabel = null;
   let walletContent = null;
@@ -348,6 +348,11 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
   const i18n = useContext(I18nContext);
 
   const ios = isIOS();
+
+  useEffect(() => {
+    const v = isInWalletBrowser();
+    setS(v.toString());
+  }, []);
 
   switch (walletStep) {
     case MobileWalletStep.Connect: {
@@ -626,6 +631,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
         </Box>
       </Box>
       <Box display="flex" flexDirection="column">
+        <p>in wallet: {s}</p>
         {walletContent}
       </Box>
     </Box>
