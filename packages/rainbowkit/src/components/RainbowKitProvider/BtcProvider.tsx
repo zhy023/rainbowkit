@@ -17,6 +17,8 @@ interface BtcInfoValue {
   setBtcinfo?: (value: BtcAddressInfo) => void;
 }
 
+const btcConnId = ['leather', 'xverse', 'unisat'];
+
 function useBtcInfoState() {
   const [btcInfo, setBtcinfo] = useState(() => getBtcStore());
 
@@ -41,7 +43,7 @@ export const checkBitWallet = (conn?: Connector) => {
     return false;
   }
 
-  return ['leather', 'xverse', 'unisat'].includes(conn.id);
+  return btcConnId.includes(conn.id);
 };
 
 // ----------------------------------------------------------------------------------
@@ -65,9 +67,10 @@ export function BtcProvider(props: { children: ReactNode }) {
 // ----------------------------------------------------------------------------------
 
 export const useAddressCurrent = () => {
-  const { address, connector } = useAccount();
+  const { connector } = useAccount();
   const { btcInfo, setBtcinfo } = useContext(BtcInfoContext);
   const isBtcWallet = checkBitWallet(connector);
+  const btcLogined = isBtcWallet && Boolean(btcInfo.address);
 
   // ----------------------------------------------------------------------------------
 
@@ -112,12 +115,13 @@ export const useAddressCurrent = () => {
   // ----------------------------------------------------------------------------------
 
   return {
-    address: isBtcWallet ? btcInfo.address : (address as string),
+    address: btcInfo.address,
     btcInfo,
+    btcLogined,
     isBtcWallet,
 
-    sendBtcTransfer,
     setBtcinfo,
     signBtcMessage,
+    sendBtcTransfer,
   };
 };

@@ -1,6 +1,7 @@
 import {
   createAuthenticationAdapter,
   useAddressCurrent,
+  AuthenticationStatus,
 } from 'rainbowkit-deputy';
 import { atom, useAtom } from 'jotai';
 import { Connector, useAccount } from 'wagmi';
@@ -32,7 +33,9 @@ class BitMessage {
 
 export function useAuth() {
   const [auth, setAuth] = useAtom(authAtom);
-  const { btcInfo } = useAddressCurrent();
+  const { btcInfo, btcLogined } = useAddressCurrent();
+
+  console.log('btc logined => ', btcLogined);
 
   useEffect(() => {
     console.log(btcInfo);
