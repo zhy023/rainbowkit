@@ -2,7 +2,7 @@ import {
   createAuthenticationAdapter,
   useAddressCurrent,
   AuthenticationStatus,
-} from 'rainbowkit-deputy';
+} from '@rainbow-me/rainbowkit';
 import { atom, useAtom } from 'jotai';
 import { Connector, useAccount } from 'wagmi';
 import { useEffect } from 'react';

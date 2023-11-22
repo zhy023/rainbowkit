@@ -1,6 +1,7 @@
 import React, {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -98,15 +99,17 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
     }
   }, [status, adapter, isDisconnected, setBtcinfo]);
 
-  const handleChangedAccount = ({ account }: ConnectorData) => {
-    // Only if account is changed then signOut
-    if (account) adapter.signOut();
-  };
+  const handleChangedAccount = useCallback(
+    ({ account }: ConnectorData) => {
+      // Only if account is changed then signOut
+      if (account) adapter.signOut();
+    },
+    [adapter],
+  );
 
   // Wait for user authentication before listening to "change" event.
   // Avoid listening immediately after wallet connection due to potential SIWE authentication delay.
   // Ensure to turn off the "change" event listener for cleanup.
-  // biome-ignore lint/nursery/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (connector && status === 'authenticated') {
       // Attach the event listener when status is 'authenticated'
@@ -117,7 +120,7 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
         connector?.off('change', handleChangedAccount);
       };
     }
-  }, [connector, status]);
+  }, [connector, status, handleChangedAccount]);
 
   return (
     <AuthenticationContext.Provider

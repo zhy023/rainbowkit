@@ -1,5 +1,5 @@
 'use client';
-import { ConnectButton, useAddressCurrent } from 'rainbowkit-deputy';
+import { ConnectButton, useAddressCurrent } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 

@@ -1,5 +1,5 @@
 import '../styles/global.css';
-import 'rainbowkit-deputy/styles.css';
+import '@rainbow-me/rainbowkit/styles.css';
 import { ReactNode } from 'react';
 import type { AppProps } from 'next/app';
 import {
@@ -7,10 +7,10 @@ import {
   RainbowKitProvider,
   connectorsForWallets,
   RainbowKitAuthenticationProvider,
-} from 'rainbowkit-deputy';
-import { metaMaskWallet } from 'rainbowkit-deputy/wallets';
+} from '@rainbow-me/rainbowkit';
+import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 
-import { trustWallet, leatherWallet } from 'rainbowkit-deputy/wallets';
+import { trustWallet, leatherWallet } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
