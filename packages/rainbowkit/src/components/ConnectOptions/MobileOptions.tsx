@@ -334,7 +334,6 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
   const titleId = 'rk_connect_title';
   const wallets = useWalletConnectors();
   const { disclaimer: Disclaimer, learnMoreUrl } = useContext(AppContext);
-  const [s, setS] = useState('');
 
   let headerLabel = null;
   let walletContent = null;
@@ -348,11 +347,6 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
   const i18n = useContext(I18nContext);
 
   const ios = isIOS();
-
-  useEffect(() => {
-    const v = isInWalletBrowser();
-    setS(v.toString());
-  }, []);
 
   switch (walletStep) {
     case MobileWalletStep.Connect: {
@@ -631,7 +625,6 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
         </Box>
       </Box>
       <Box display="flex" flexDirection="column">
-        <p>in wallet: {s}</p>
         {walletContent}
       </Box>
     </Box>
