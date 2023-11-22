@@ -79,11 +79,99 @@ export function WalletButton({
   const getMobileUri = mobile?.getUri;
   const coolModeRef = useCoolMode(iconUrl);
   const initialized = useRef(false);
-
   const i18n = useContext(I18nContext);
 
+  const metaMaskDeeplink = (domain: string) =>
+    `https://metamask.app.link/dapp/${domain}?w=metaMask`;
+
+  const coinbaseDeeplink = (url: string) =>
+    `https://go.cb-w.com/dapp?cb_url=${url}?w=coinbase`;
+
+  const tokenPocketDeeplink = (url: string) =>
+    `tpdapp://open?params={'url': '${url}?w=tokenPocket'}`;
+
+  const trustDeeplink = (url: string) =>
+    `https://link.trustwallet.com/open_url?coin_id=20000714&url=${url}?w=trust`;
+
+  // ----------------------------------------------------------------------------------
+
+  function getProtocol() {
+    if (typeof window === 'undefined') {
+      return '';
+    }
+
+    return `${window.location.protocol}://`;
+  }
+
+  // ----------------------------------------------------------------------------------
+
+  function getDomain() {
+    if (typeof window === 'undefined') {
+      return '';
+    }
+
+    return window.location.host;
+  }
+
+  // ----------------------------------------------------------------------------------
+
+  function getOnly(): string | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const params = url.searchParams;
+
+    // same rainbowkit
+    return params.get('w');
+  }
+
+  // ----------------------------------------------------------------------------------
+
+  function getDeepLink() {
+    const prot = getProtocol();
+    const domain = getDomain();
+    const prev = `${prot}${domain}`;
+
+    if (id === 'metaMask') {
+      return metaMaskDeeplink(domain);
+    }
+
+    if (id === 'coinbase') {
+      return coinbaseDeeplink(prev);
+    }
+
+    if (id === 'tokenPocket') {
+      return tokenPocketDeeplink(prev);
+    }
+
+    if (id === 'trust') {
+      return trustDeeplink(prev);
+    }
+
+    return '';
+  }
+
+  // ----------------------------------------------------------------------------------
+
   const onConnect = useCallback(async () => {
+    const isInWallet = getOnly();
+    const linkUrl = getDeepLink();
+    const link = document.createElement('a');
+
+    link.href = linkUrl;
+    link.target = '_blank';
+    link.rel = 'noreferrer noopener';
+    link.click();
+
+    if (linkUrl) {
+      console.log(isInWallet);
+    }
+
     if (id === 'walletConnect') onClose?.();
+
     connect?.()?.catch(() => {});
 
     // We need to guard against "onConnecting" callbacks being fired
@@ -97,7 +185,7 @@ export function WalletButton({
       callbackFired = true;
 
       if (getMobileUri) {
-        const mobileUri = await getMobileUri();
+        const mobileUri = await getMobileUri?.();
 
         if (
           connector.id === 'walletConnect' ||
@@ -216,6 +304,7 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
   const titleId = 'rk_connect_title';
   const wallets = useWalletConnectors();
   const { disclaimer: Disclaimer, learnMoreUrl } = useContext(AppContext);
+  const [browserText, setBrowserText] = useState('');
 
   let headerLabel = null;
   let walletContent = null;
@@ -427,9 +516,20 @@ export function MobileOptions({ onClose }: { onClose: () => void }) {
     }
   }
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const v = window.navigator.userAgent.toLowerCase();
+
+    setBrowserText(v);
+  }, []);
+
   return (
     <Box display="flex" flexDirection="column" paddingBottom="36">
       {/* header section */}
+      <p>browser: {browserText}</p>
       <Box
         background={
           headerBackgroundContrast ? 'profileForeground' : 'modalBackground'
